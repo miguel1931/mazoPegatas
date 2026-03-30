@@ -328,43 +328,91 @@
       box-shadow: 0 0 20px rgba(227,52,47,0.5);
     }
 
-    /* Lightbox */
-    .lightbox {
+    /* Popup overlay */
+    .popup-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.92);
+      background: rgba(0,0,0,0.85);
       z-index: 200;
       justify-content: center;
       align-items: center;
-      cursor: zoom-out;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
     }
-    .lightbox.open { display: flex; }
-    .lightbox img {
-      max-width: 90vw;
-      max-height: 85vh;
-      object-fit: contain;
+    .popup-overlay.open { display: flex; }
+    .popup-box {
+      background: var(--dark);
       border: 4px solid var(--red);
-      box-shadow: 0 0 60px rgba(227,52,47,0.3);
-      animation: lb-in 0.3s ease;
+      box-shadow:
+        8px 8px 0 var(--red),
+        0 0 80px rgba(227,52,47,0.3);
+      padding: 40px 36px;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      position: relative;
+      animation: popup-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    @keyframes lb-in {
-      from { transform: scale(0.85); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    @keyframes popup-in {
+      from { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+      to { transform: scale(1) rotate(0); opacity: 1; }
     }
-    .lightbox .close-btn {
-      position: absolute;
-      top: 20px; right: 24px;
+    .popup-crown {
+      width: 60px; height: 38px;
+      margin: 0 auto 12px;
+      filter: drop-shadow(0 0 16px rgba(255,215,0,0.5));
+    }
+    .popup-title {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 32px;
+      letter-spacing: 3px;
+      color: var(--neon-yellow);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      text-shadow: 0 0 20px rgba(253,252,71,0.3);
+    }
+    .popup-msg {
+      font-family: 'Space Mono', monospace;
+      font-size: 16px;
       color: var(--cream);
-      cursor: pointer;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .popup-msg em {
+      color: var(--neon-green);
+      font-style: normal;
+      font-weight: 700;
+    }
+    .popup-close {
+      display: inline-block;
+      padding: 12px 28px;
       background: var(--red);
-      width: 48px; height: 48px;
-      display: flex; justify-content: center; align-items: center;
+      color: var(--cream);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 3px;
       border: 2px solid var(--cream);
-      z-index: 201;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-transform: uppercase;
+    }
+    .popup-close:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(227,52,47,0.5);
+    }
+    /* Haring energy around popup */
+    .popup-box::before, .popup-box::after {
+      content: '';
+      position: absolute;
+      border: 3px dashed var(--neon-yellow);
+      pointer-events: none;
+      animation: dash-spin 4s linear infinite;
+    }
+    .popup-box::before { inset: -10px; }
+    .popup-box::after { inset: -18px; border-color: var(--red); opacity: 0.4; }
+    @keyframes dash-spin {
+      to { border-color: var(--neon-pink); }
     }
   </style>
 </head>
@@ -452,10 +500,19 @@
   <!-- Refresh button -->
   <div class="hint" onclick="refreshWall()" title="Pulsa R o haz clic">⟳ REFRESH</div>
 
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-    <div class="close-btn">✕</div>
-    <img id="lb-img" src="" alt="pegatina ampliada" />
+  <!-- Popup -->
+  <div class="popup-overlay" id="popup" onclick="closePopup(event)">
+    <div class="popup-box" onclick="event.stopPropagation()">
+      <svg class="popup-crown" viewBox="0 0 80 50" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 45 L10 18 L2 28 L16 5 L26 22 L40 2 L54 22 L64 5 L78 28 L70 18 L70 45 Z" fill="none" stroke="#FFD700" stroke-width="3" stroke-linejoin="round"/>
+        <line x1="16" y1="32" x2="16" y2="40" stroke="#FFD700" stroke-width="2.5"/>
+        <line x1="40" y1="28" x2="40" y2="40" stroke="#FFD700" stroke-width="2.5"/>
+        <line x1="64" y1="32" x2="64" y2="40" stroke="#FFD700" stroke-width="2.5"/>
+      </svg>
+      <div class="popup-title">¡Ya es tuya!</div>
+      <p class="popup-msg">La pegatina ya es tuya,<br><em>ya puedes salir y pegarla por la calle</em></p>
+      <div class="popup-close" onclick="closePopup()">Cerrar</div>
+    </div>
   </div>
 
   <script>
@@ -550,7 +607,7 @@
         img.onerror = function () {
           this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="%230A0A0A"/><text x="50%" y="50%" fill="%23B8A88A" font-size="18" font-family="monospace" text-anchor="middle" dominant-baseline="middle">imagen no disponible</text></svg>';
         };
-        img.addEventListener('click', () => openLightbox(src));
+        img.addEventListener('click', () => downloadSticker(src, idx));
         card.appendChild(img);
         grid.appendChild(card);
       });
@@ -566,20 +623,28 @@
       }, 260);
     }
 
-    // Lightbox
-    function openLightbox(src) {
-      document.getElementById('lb-img').src = src;
-      document.getElementById('lightbox').classList.add('open');
+    // Download + Popup
+    function downloadSticker(src, idx) {
+      // Trigger download
+      const a = document.createElement('a');
+      a.href = src;
+      a.download = `pegatina_${idx + 1}.jpg`;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      // Show popup
+      document.getElementById('popup').classList.add('open');
     }
-    function closeLightbox() {
-      document.getElementById('lightbox').classList.remove('open');
+    function closePopup(e) {
+      document.getElementById('popup').classList.remove('open');
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       renderGrid();
       document.addEventListener('keydown', e => {
         if (e.key.toLowerCase() === 'r') refreshWall();
-        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'Escape') closePopup();
       });
       document.querySelector('.hero').addEventListener('dblclick', refreshWall);
     });
