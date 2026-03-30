@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>mazoPegatas</title>
+  <meta name="description" content="mazoPegatas — muro aleatorio de pegatinas 6x2" />
+  <style>
+    :root{
+      --bg:#0f0f12;
+      --accent:#ff5a5f;
+      --muted:#cfcfcf;
+      --card-bg:rgba(255,255,255,0.04);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#0b0b0d 0%, #141416 60%);
+      color:var(--muted);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding-bottom:40px;
+      -webkit-font-feature-settings: "liga" 1;
+    }
+
+    /* Header urbano */
+    .hero{
+      padding:48px 20px;
+      background:
+        radial-gradient(1200px 200px at 10% 10%, rgba(255,90,95,0.06), transparent 10%),
+        linear-gradient(90deg, rgba(20,20,22,0.6), rgba(10,10,12,0.2));
+      border-bottom:1px solid rgba(255,255,255,0.03);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .hero-inner{
+      text-align:center;
+      max-width:1200px;
+      width:100%;
+    }
+    .brand{
+      font-size:56px;
+      letter-spacing:2px;
+      color:var(--accent);
+      text-transform:lowercase;
+      font-weight:900;
+      margin-bottom:6px;
+      text-shadow:
+        0 2px 0 rgba(0,0,0,0.6),
+        0 8px 30px rgba(255,90,95,0.06);
+      transform:skewX(-6deg);
+      display:inline-block;
+      padding:8px 22px;
+      background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:8px;
+      border:1px solid rgba(255,90,95,0.08);
+    }
+    .tag{
+      color:#bdbdbd;
+      margin-top:8px;
+      font-size:14px;
+      letter-spacing:0.6px;
+    }
+
+    /* Grid 6x2 */
+    main{max-width:1280px;margin:28px auto;padding:0 18px}
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-rows: 1fr;
+      gap:12px;
+    }
+    .card{
+      background:var(--card-bg);
+      border-radius:8px;
+      overflow:hidden;
+      min-height:140px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      border:1px solid rgba(255,255,255,0.03);
+      transition:transform .18s ease, box-shadow .18s ease;
+      isolation:isolate;
+    }
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.12));
+      pointer-events:none;
+    }
+    .card img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform-origin:center;
+      transition:transform .28s ease;
+    }
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(0,0,0,0.6)}
+    .card:hover img{transform:scale(1.04)}
+
+    /* small label overlay for index */
+    .label{
+      position:absolute;
+      left:8px;
+      top:8px;
+      background:rgba(0,0,0,0.45);
+      color:#fff;
+      font-size:12px;
+      padding:6px 8px;
+      border-radius:999px;
+      backdrop-filter:blur(4px);
+      border:1px solid rgba(255,255,255,0.04);
+      z-index:2;
+    }
+
+    /* Responsive */
+    @media (max-width:1200px){
+      .grid{grid-template-columns: repeat(4, 1fr)}
+      .brand{font-size:46px}
+    }
+    @media (max-width:700px){
+      .brand{font-size:34px}
+      .grid{grid-template-columns: repeat(2, 1fr)}
+    }
+
+    /* Footer */
+    .footer{max-width:1200px;margin:18px auto;text-align:center;color:#8f8f8f;font-size:13px}
+  </style>
+</head>
+<body>
+  <header class="hero" role="banner">
+    <div class="hero-inner">
+      <h1 class="brand" aria-label="mazoPegatas">mazoPegatas</h1>
+      <p class="tag">muro de pegatinas · aleatorio · callejero</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="wall" aria-labelledby="wall-title">
+      <h2 id="wall-title" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Muro de pegatinas</h2>
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <small>Versión estática · 6×2 aleatorio · mazoPegatas</small>
+  </footer>
+
+  <script>
+    // Lista de URLs proporcionadas por el usuario
+    const IMAGES = [
+"https://i.ibb.co/nMDmWFz5/IMG20260329193013.jpg",
+"https://i.ibb.co/SwgbBdsY/IMG20260329193041.jpg",
+"https://i.ibb.co/fBKJ5tf/IMG20260329193050.jpg",
+"https://i.ibb.co/cXrk4rVq/IMG20260329194115.jpg",
+"https://i.ibb.co/KjTP8bDq/IMG20260329194117.jpg",
+"https://i.ibb.co/Rf5dgR7/IMG20260329194147.jpg",
+"https://i.ibb.co/r25ftmTx/IMG20260330141939.jpg",
+"https://i.ibb.co/9Hw0HqQR/IMG20260330190941.jpg",
+"https://i.ibb.co/tMq1q1BK/IMG20260330204838.jpg",
+"https://i.ibb.co/8nJcqfLd/IMG20260318100703.jpg",
+"https://i.ibb.co/0j2FyXt2/IMG20260319130712.jpg",
+"https://i.ibb.co/xqfNhrrW/IMG20260319130716.jpg",
+"https://i.ibb.co/rKtgKKL0/IMG20260319165027.jpg",
+"https://i.ibb.co/QvwpVQXn/IMG20260320214811.jpg",
+"https://i.ibb.co/9j1wnNR/IMG20260322114606.jpg",
+"https://i.ibb.co/Q77zgdJT/IMG20260323122151.jpg",
+"https://i.ibb.co/ymV85bQd/IMG20260323122239.jpg",
+"https://i.ibb.co/8n9cHzRf/IMG20260324094941.jpg",
+"https://i.ibb.co/F454Zm37/IMG20260324223202.jpg",
+"https://i.ibb.co/hjFtDLf/IMG20260324224412.jpg",
+"https://i.ibb.co/tTYRc460/IMG20260324224615.jpg",
+"https://i.ibb.co/DPCjb6y7/IMG20260325185629.jpg",
+"https://i.ibb.co/BHVztq9Y/IMG20260325190223.jpg",
+"https://i.ibb.co/skvY30R/IMG20260326184454.jpg",
+"https://i.ibb.co/rRBCXn0q/IMG20260328201141.jpg",
+"https://i.ibb.co/qM9m3znk/IMG20260329193008.jpg",
+"https://i.ibb.co/ZPQj5TJ/IMG20260329193010.jpg",
+"https://i.ibb.co/PZb3VDVf/IMG20260329193015.jpg",
+"https://i.ibb.co/8Dw6q4YN/IMG20260329193039.jpg",
+"https://i.ibb.co/jkpp4ygS/IMG20260329193046.jpg",
+"https://i.ibb.co/Lhh0qhm9/IMG20260329193942.jpg",
+"https://i.ibb.co/7NjjsPZk/IMG20260330142058.jpg",
+"https://i.ibb.co/CpNLQKMG/IMG20260330191355.jpg",
+"https://i.ibb.co/sp8Spvwp/IMG20260330191357.jpg",
+"https://i.ibb.co/gMCWZRBj/IMG20260318100707.jpg",
+"https://i.ibb.co/YTR17cJ2/IMG20260319130713.jpg",
+"https://i.ibb.co/cSMFfPv2/IMG20260320214814.jpg",
+"https://i.ibb.co/ZzKX6WS0/IMG20260320214822.jpg",
+"https://i.ibb.co/BxLV3hx/IMG20260320214847.jpg",
+"https://i.ibb.co/5WMq1bsJ/IMG20260322114608.jpg",
+"https://i.ibb.co/jpfPpJ9/IMG20260322114611.jpg",
+"https://i.ibb.co/1GTzjBcK/IMG20260323122237.jpg",
+"https://i.ibb.co/QvNjNkYS/IMG20260324223206.jpg",
+"https://i.ibb.co/XxkPk76C/IMG20260324223209.jpg",
+"https://i.ibb.co/MktV2vV1/IMG20260324223213.jpg",
+"https://i.ibb.co/Y4wCMtwC/IMG20260324223842.jpg",
+"https://i.ibb.co/xK9pDccF/IMG20260324230152.jpg",
+"https://i.ibb.co/jZJGgNYG/IMG20260324230155.jpg",
+"https://i.ibb.co/TxdDyGqZ/IMG20260325185825.jpg",
+"https://i.ibb.co/LdkHzTTp/IMG20260325185827.jpg",
+"https://i.ibb.co/N6R2J63w/IMG20260325185844.jpg",
+"https://i.ibb.co/jkkHWkHR/IMG20260325190226.jpg",
+"https://i.ibb.co/HfJ43jxC/IMG20260325190325.jpg",
+"https://i.ibb.co/WvmnLcjK/IMG20260326184457.jpg",
+"https://i.ibb.co/7dF3dG15/IMG20260328201145.jpg",
+"https://i.ibb.co/dsX50FK0/IMG20260329105115.jpg",
+"https://i.ibb.co/RT1LsnvC/IMG20260329191447.jpg",
+"https://i.ibb.co/tPZx4rF7/IMG20260329191458.jpg"
+    ];
+
+    // Fisher-Yates shuffle (no mutation of original)
+    function shuffle(array){
+      const a = array.slice();
+      for(let i = a.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    // Render 6x2 = 12 fotos aleatorias
+    function renderGrid(){
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      const shuffled = shuffle(IMAGES);
+      const chosen = shuffled.slice(0, 12); // 6x2 = 12
+      chosen.forEach((src, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        // small index label
+        const label = document.createElement('span');
+        label.className = 'label';
+        label.textContent = (idx + 1);
+        card.appendChild(label);
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = `pegatina ${idx+1}`;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        // fallback handler: if image fails, show a subtle placeholder
+        img.onerror = function(){
+          this.style.objectFit = 'contain';
+          this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="%230f0f12"/><text x="50%" y="50%" fill="%23bbbbbb" font-size="20" font-family="Arial" text-anchor="middle" dominant-baseline="middle">imagen no disponible</text></svg>';
+        };
+        card.appendChild(img);
+        grid.appendChild(card);
+      });
+    }
+
+    // Regenerar muro con animación ligera
+    function refreshWall(){
+      const grid = document.getElementById('grid');
+      grid.style.opacity = '0';
+      setTimeout(() => {
+        renderGrid();
+        grid.style.transition = 'opacity 300ms ease';
+        grid.style.opacity = '1';
+      }, 220);
+    }
+
+    // Inicializa al cargar
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGrid();
+
+      // Permite refrescar con tecla R o haciendo doble click en header
+      document.addEventListener('keydown', (e) => {
+        if(e.key.toLowerCase() === 'r'){
+          refreshWall();
+        }
+      });
+      document.querySelector('.hero').addEventListener('dblclick', refreshWall);
+    });
+  </script>
+</body>
+</html>
