@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>mazoPegatas · Catálogo</title>
+  <meta name="description" content="Catálogo visual de pegatinas ilustradas · mazoPegatas" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #F5E6C8;
+      --red: #E3342F;
+      --black: #0A0A0A;
+      --dark: #1A1A1A;
+      --neon-pink: #FF3CAC;
+      --neon-yellow: #FDFC47;
+      --neon-green: #00F260;
+      --blue-basquiat: #3B82F6;
+      --crown-gold: #FFD700;
+      --muted: #B8A88A;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Space Mono', monospace;
+      background: var(--black);
+      color: var(--cream);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Propaganda border */
+    .propaganda-border {
+      position: fixed; inset: 0; pointer-events: none; z-index: 100;
+      border: 4px solid var(--red);
+      box-shadow: inset 0 0 0 2px var(--black), inset 0 0 0 6px var(--cream), inset 0 0 0 8px var(--black);
+    }
+
+    /* Header */
+    .hero {
+      position: relative;
+      padding: 50px 24px 36px;
+      text-align: center;
+      background:
+        repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(227,52,47,0.03) 20px, rgba(227,52,47,0.03) 22px),
+        linear-gradient(180deg, var(--black), var(--dark));
+      border-bottom: 4px solid var(--red);
+    }
+    .crown {
+      display: block; margin: 0 auto 8px; width: 52px; height: 32px;
+      filter: drop-shadow(0 0 12px rgba(255,215,0,0.4));
+      animation: crown-bob 3s ease-in-out infinite;
+    }
+    @keyframes crown-bob {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-6px) rotate(2deg); }
+    }
+    .brand {
+      font-family: 'Bebas Neue', Impact, sans-serif;
+      font-size: 56px; letter-spacing: 4px; color: var(--cream);
+      text-transform: uppercase; display: inline-block;
+      text-shadow: 3px 3px 0 var(--red), -2px -2px 0 var(--red), 0 0 30px rgba(227,52,47,0.3);
+      text-decoration: line-through; text-decoration-color: var(--red); text-decoration-thickness: 3px;
+    }
+    .tag { color: var(--muted); font-size: 13px; letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; }
+
+    /* Nav */
+    .nav-bar { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+    .nav-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 20px; background: transparent; color: var(--cream);
+      border: 2px solid var(--red); font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px; letter-spacing: 2px; text-decoration: none;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+    }
+    .nav-link:hover { background: var(--red); color: var(--cream); box-shadow: 0 0 20px rgba(227,52,47,0.4); }
+    .nav-link.active { background: var(--red); color: var(--cream); }
+    .nav-link svg { width: 18px; height: 18px; }
+
+    /* Catalog */
+    main { max-width: 1360px; margin: 32px auto; padding: 0 20px 80px; }
+    .cat-intro {
+      text-align: center; margin-bottom: 40px;
+      font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px;
+      color: var(--cream); text-transform: uppercase;
+    }
+    .cat-intro span { color: var(--red); }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .sticker {
+      position: relative;
+      aspect-ratio: 1;
+      background: rgba(255,255,255,0.03);
+      border: 2px solid rgba(245,230,200,0.08);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .sticker:hover {
+      transform: translateY(-6px) rotate(-1deg);
+      box-shadow: 5px 5px 0 var(--red), 0 16px 40px rgba(0,0,0,0.5);
+      border-color: var(--neon-yellow);
+    }
+    .sticker svg { width: 100%; height: auto; max-height: 130px; }
+    .sticker-name {
+      margin-top: 14px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--cream);
+      text-align: center;
+    }
+    .sticker-tag {
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Random tilts with CSS */
+    .sticker:nth-child(odd) { transform: rotate(-1deg); }
+    .sticker:nth-child(even) { transform: rotate(0.5deg); }
+    .sticker:nth-child(3n) { transform: rotate(1.5deg); }
+    .sticker:hover { transform: translateY(-6px) rotate(-1deg) !important; }
+
+    /* Footer */
+    .footer {
+      max-width: 1200px; margin: 32px auto 48px; text-align: center;
+      color: var(--muted); font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+      border-top: 2px solid rgba(245,230,200,0.08); padding-top: 24px;
+    }
+    .footer span { color: var(--red); font-weight: 700; }
+
+    @media (max-width: 700px) {
+      .brand { font-size: 36px; letter-spacing: 2px; }
+      .catalog-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .sticker { padding: 14px; }
+      .sticker svg { max-height: 90px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="propaganda-border"></div>
+
+  <header class="hero" role="banner">
+    <div>
+      <svg class="crown" viewBox="0 0 80 50" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 45 L10 18 L2 28 L16 5 L26 22 L40 2 L54 22 L64 5 L78 28 L70 18 L70 45 Z" fill="none" stroke="#FFD700" stroke-width="3" stroke-linejoin="round"/>
+        <line x1="16" y1="32" x2="16" y2="40" stroke="#FFD700" stroke-width="2.5"/>
+        <line x1="40" y1="28" x2="40" y2="40" stroke="#FFD700" stroke-width="2.5"/>
+        <line x1="64" y1="32" x2="64" y2="40" stroke="#FFD700" stroke-width="2.5"/>
+      </svg>
+      <h1 class="brand">Catálogo</h1>
+      <p class="tag">colección visual de pegatinas ilustradas</p>
+      <nav class="nav-bar">
+        <a href="index.html" class="nav-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Muro
+        </a>
+        <a href="catalogo.html" class="nav-link active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          Catálogo
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <p class="cat-intro">Pegatinas <span>×</span> Arte Urbano <span>×</span> Ilustraciones</p>
+
+    <div class="catalog-grid" id="catalog">
+
+      <!-- 1. SKULL CON CORONA (Basquiat) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Crown -->
+          <path d="M30 38 L30 22 L25 28 L35 12 L45 26 L60 8 L75 26 L85 12 L95 28 L90 22 L90 38 Z" fill="none" stroke="#FFD700" stroke-width="2.5" stroke-linejoin="round"/>
+          <!-- Skull -->
+          <rect x="35" y="42" width="50" height="50" rx="8" fill="none" stroke="#F5E6C8" stroke-width="3"/>
+          <!-- Eyes -->
+          <circle cx="50" cy="60" r="6" fill="none" stroke="#E3342F" stroke-width="2.5"/>
+          <circle cx="70" cy="60" r="6" fill="none" stroke="#E3342F" stroke-width="2.5"/>
+          <circle cx="50" cy="60" r="2" fill="#E3342F"/>
+          <circle cx="70" cy="60" r="2" fill="#E3342F"/>
+          <!-- Nose -->
+          <path d="M57 70 L63 70 L60 74 Z" fill="#F5E6C8"/>
+          <!-- Teeth -->
+          <line x1="48" y1="80" x2="48" y2="88" stroke="#F5E6C8" stroke-width="2"/>
+          <line x1="54" y1="80" x2="54" y2="88" stroke="#F5E6C8" stroke-width="2"/>
+          <line x1="60" y1="80" x2="60" y2="88" stroke="#F5E6C8" stroke-width="2"/>
+          <line x1="66" y1="80" x2="66" y2="88" stroke="#F5E6C8" stroke-width="2"/>
+          <line x1="72" y1="80" x2="72" y2="88" stroke="#F5E6C8" stroke-width="2"/>
+          <line x1="44" y1="80" x2="76" y2="80" stroke="#F5E6C8" stroke-width="2.5"/>
+          <!-- Scratch marks -->
+          <line x1="92" y1="45" x2="98" y2="39" stroke="#FDFC47" stroke-width="1.5"/>
+          <line x1="94" y1="50" x2="100" y2="44" stroke="#FDFC47" stroke-width="1.5"/>
+          <line x1="96" y1="55" x2="102" y2="49" stroke="#FDFC47" stroke-width="1.5"/>
+        </svg>
+        <div class="sticker-name">Skull Crown</div>
+        <div class="sticker-tag">Basquiat</div>
+      </div>
+
+      <!-- 2. RADIANT BABY (Haring) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Radiant lines -->
+          <line x1="60" y1="10" x2="60" y2="2" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="85" y1="20" x2="92" y2="13" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="100" y1="45" x2="108" y2="42" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="35" y1="20" x2="28" y2="13" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="20" y1="45" x2="12" y2="42" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="95" y1="30" x2="105" y2="25" stroke="#FDFC47" stroke-width="1.5"/>
+          <line x1="25" y1="30" x2="15" y2="25" stroke="#FDFC47" stroke-width="1.5"/>
+          <!-- Crawling baby -->
+          <circle cx="55" cy="38" r="14" fill="none" stroke="#FF3CAC" stroke-width="3.5"/>
+          <path d="M55 52 C 55 62, 50 72, 40 80" stroke="#FF3CAC" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <path d="M55 52 C 55 60, 65 68, 75 72" stroke="#FF3CAC" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <!-- Arms & legs like crawling -->
+          <path d="M40 80 L 30 90" stroke="#FF3CAC" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M40 80 L 50 92" stroke="#FF3CAC" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M75 72 L 85 82" stroke="#FF3CAC" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M75 72 L 65 85" stroke="#FF3CAC" stroke-width="3.5" stroke-linecap="round"/>
+          <!-- More radiance -->
+          <line x1="75" y1="18" x2="80" y2="8" stroke="#FDFC47" stroke-width="1.5"/>
+          <line x1="40" y1="18" x2="35" y2="8" stroke="#FDFC47" stroke-width="1.5"/>
+        </svg>
+        <div class="sticker-name">Radiant Baby</div>
+        <div class="sticker-tag">Haring</div>
+      </div>
+
+      <!-- 3. OBEY STAR (Fairey) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer circle -->
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#E3342F" stroke-width="4"/>
+          <circle cx="60" cy="60" r="44" fill="none" stroke="#F5E6C8" stroke-width="1.5"/>
+          <!-- Star -->
+          <polygon points="60,20 68,45 95,45 73,60 80,85 60,70 40,85 47,60 25,45 52,45" fill="none" stroke="#E3342F" stroke-width="3" stroke-linejoin="round"/>
+          <!-- Inner eye -->
+          <circle cx="60" cy="55" r="10" fill="none" stroke="#F5E6C8" stroke-width="2"/>
+          <circle cx="60" cy="55" r="4" fill="#E3342F"/>
+          <!-- Text arc -->
+          <text x="60" y="108" text-anchor="middle" fill="#F5E6C8" font-family="'Bebas Neue',sans-serif" font-size="11" letter-spacing="4">OBEY</text>
+        </svg>
+        <div class="sticker-name">Star Eye</div>
+        <div class="sticker-tag">Fairey</div>
+      </div>
+
+      <!-- 4. DANCING FIGURE (Haring) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 130" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body -->
+          <circle cx="60" cy="22" r="12" fill="none" stroke="#00F260" stroke-width="3.5"/>
+          <line x1="60" y1="34" x2="60" y2="72" stroke="#00F260" stroke-width="3.5"/>
+          <!-- Arms up -->
+          <path d="M60 48 L 30 28" stroke="#00F260" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M60 48 L 90 28" stroke="#00F260" stroke-width="3.5" stroke-linecap="round"/>
+          <!-- Legs spread -->
+          <path d="M60 72 L 35 100" stroke="#00F260" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M60 72 L 85 100" stroke="#00F260" stroke-width="3.5" stroke-linecap="round"/>
+          <!-- Energy lines -->
+          <line x1="25" y1="22" x2="18" y2="18" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="95" y1="22" x2="102" y2="18" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="22" y1="30" x2="14" y2="30" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="98" y1="30" x2="106" y2="30" stroke="#FDFC47" stroke-width="2"/>
+          <!-- Heart -->
+          <path d="M55 52 C 55 48, 50 48, 50 52 C 50 56, 55 58, 55 58 C 55 58, 60 56, 60 52 C 60 48, 55 48, 55 52" fill="#E3342F" transform="translate(3,-2) scale(0.8)"/>
+        </svg>
+        <div class="sticker-name">Dancing Joy</div>
+        <div class="sticker-tag">Haring</div>
+      </div>
+
+      <!-- 5. TRES OJOS (Basquiat) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Head shape rough -->
+          <path d="M30 90 L30 35 C30 20, 90 20, 90 35 L90 90 Z" fill="none" stroke="#F5E6C8" stroke-width="3" stroke-linejoin="round"/>
+          <!-- 3 Eyes -->
+          <circle cx="45" cy="50" r="8" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <circle cx="75" cy="50" r="8" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <circle cx="60" cy="38" r="5" fill="none" stroke="#FFD700" stroke-width="2"/>
+          <!-- Pupils -->
+          <circle cx="45" cy="50" r="3" fill="#3B82F6"/>
+          <circle cx="75" cy="50" r="3" fill="#3B82F6"/>
+          <circle cx="60" cy="38" r="2" fill="#FFD700"/>
+          <!-- Mouth scrawl -->
+          <path d="M42 72 C 48 78, 72 78, 78 72" fill="none" stroke="#E3342F" stroke-width="3" stroke-linecap="round"/>
+          <!-- Basquiat cross-hatching -->
+          <line x1="95" y1="30" x2="110" y2="20" stroke="#F5E6C8" stroke-width="1.5" opacity="0.5"/>
+          <line x1="95" y1="36" x2="110" y2="26" stroke="#F5E6C8" stroke-width="1.5" opacity="0.5"/>
+          <line x1="95" y1="42" x2="110" y2="32" stroke="#F5E6C8" stroke-width="1.5" opacity="0.5"/>
+          <!-- Text scribble -->
+          <text x="22" y="112" fill="#E3342F" font-family="'Space Mono',monospace" font-size="10" font-weight="700" transform="rotate(-5,22,112)">SAMO©</text>
+        </svg>
+        <div class="sticker-name">Tres Ojos</div>
+        <div class="sticker-tag">Basquiat</div>
+      </div>
+
+      <!-- 6. PROPAGANDA FIST (Fairey) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background circle -->
+          <circle cx="60" cy="55" r="48" fill="none" stroke="#E3342F" stroke-width="3"/>
+          <!-- Rays -->
+          <g opacity="0.2">
+            <line x1="60" y1="7" x2="60" y2="0" stroke="#F5E6C8" stroke-width="3"/>
+            <line x1="85" y1="14" x2="92" y2="7" stroke="#F5E6C8" stroke-width="3"/>
+            <line x1="102" y1="35" x2="110" y2="30" stroke="#F5E6C8" stroke-width="3"/>
+            <line x1="18" y1="35" x2="10" y2="30" stroke="#F5E6C8" stroke-width="3"/>
+            <line x1="35" y1="14" x2="28" y2="7" stroke="#F5E6C8" stroke-width="3"/>
+          </g>
+          <!-- Raised fist -->
+          <rect x="48" y="35" width="24" height="20" rx="4" fill="none" stroke="#F5E6C8" stroke-width="3"/>
+          <line x1="48" y1="42" x2="72" y2="42" stroke="#F5E6C8" stroke-width="1.5"/>
+          <line x1="48" y1="48" x2="72" y2="48" stroke="#F5E6C8" stroke-width="1.5"/>
+          <!-- Arm -->
+          <rect x="52" y="55" width="16" height="30" fill="none" stroke="#F5E6C8" stroke-width="3"/>
+          <!-- Text -->
+          <text x="60" y="108" text-anchor="middle" fill="#E3342F" font-family="'Bebas Neue',sans-serif" font-size="12" letter-spacing="3">RESIST</text>
+        </svg>
+        <div class="sticker-name">Fist Up</div>
+        <div class="sticker-tag">Fairey</div>
+      </div>
+
+      <!-- 7. BARKING DOG (Haring) -->
+      <div class="sticker">
+        <svg viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body -->
+          <path d="M30 75 L80 75 L80 50 L95 50 L95 30 L110 30 L110 42 L95 42" fill="none" stroke="#FDFC47" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+          <!-- Head/mouth -->
+          <path d="M95 30 L120 15" stroke="#FDFC47" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M110 30 L120 15" stroke="#FDFC47" stroke-width="3.5" stroke-linecap="round"/>
+          <!-- Eye -->
+          <circle cx="100" cy="36" r="2.5" fill="#FDFC47"/>
+          <!-- Legs -->
+          <line x1="40" y1="75" x2="35" y2="95" stroke="#FDFC47" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="55" y1="75" x2="50" y2="95" stroke="#FDFC47" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="70" y1="75" x2="65" y2="95" stroke="#FDFC47" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="80" y1="65" x2="78" y2="95" stroke="#FDFC47" stroke-width="3.5" stroke-linecap="round"/>
+          <!-- Tail -->
+          <path d="M30 75 C 20 65, 15 55, 25 45" stroke="#FDFC47" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <!-- Bark lines -->
+          <line x1="122" y1="10" x2="132" y2="5" stroke="#E3342F" stroke-width="2.5"/>
+          <line x1="125" y1="16" x2="135" y2="14" stroke="#E3342F" stroke-width="2.5"/>
+          <line x1="122" y1="22" x2="132" y2="22" stroke="#E3342F" stroke-width="2.5"/>
+        </svg>
+        <div class="sticker-name">Barking Dog</div>
+        <div class="sticker-tag">Haring</div>
+      </div>
+
+      <!-- 8. DINERO (Basquiat) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Dollar sign -->
+          <text x="60" y="78" text-anchor="middle" fill="none" stroke="#00F260" stroke-width="2.5" font-family="'Bebas Neue',sans-serif" font-size="80">$</text>
+          <!-- Cross out -->
+          <line x1="25" y1="30" x2="95" y2="90" stroke="#E3342F" stroke-width="3"/>
+          <line x1="95" y1="30" x2="25" y2="90" stroke="#E3342F" stroke-width="3"/>
+          <!-- Crown on top -->
+          <path d="M38 18 L38 8 L35 12 L42 2 L48 10 L55 0 L62 10 L68 2 L75 12 L72 8 L72 18 Z" fill="none" stroke="#FFD700" stroke-width="2" stroke-linejoin="round"/>
+          <!-- Scribbles -->
+          <text x="12" y="115" fill="#F5E6C8" font-family="'Space Mono',monospace" font-size="9" opacity="0.6">PLUTO</text>
+        </svg>
+        <div class="sticker-name">Money Crown</div>
+        <div class="sticker-tag">Basquiat</div>
+      </div>
+
+      <!-- 9. PEACE EYE (Fairey) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer -->
+          <rect x="10" y="10" width="100" height="100" fill="none" stroke="#E3342F" stroke-width="3"/>
+          <rect x="16" y="16" width="88" height="88" fill="none" stroke="#F5E6C8" stroke-width="1"/>
+          <!-- Peace sign -->
+          <circle cx="60" cy="58" r="30" fill="none" stroke="#E3342F" stroke-width="3"/>
+          <line x1="60" y1="28" x2="60" y2="88" stroke="#E3342F" stroke-width="3"/>
+          <line x1="60" y1="58" x2="40" y2="78" stroke="#E3342F" stroke-width="3"/>
+          <line x1="60" y1="58" x2="80" y2="78" stroke="#E3342F" stroke-width="3"/>
+          <!-- Stars -->
+          <polygon points="25,22 27,28 33,28 28,32 30,38 25,34 20,38 22,32 17,28 23,28" fill="#FFD700" transform="scale(0.7) translate(5,5)"/>
+          <polygon points="25,22 27,28 33,28 28,32 30,38 25,34 20,38 22,32 17,28 23,28" fill="#FFD700" transform="scale(0.7) translate(135,5)"/>
+          <!-- Text -->
+          <text x="60" y="108" text-anchor="middle" fill="#F5E6C8" font-family="'Bebas Neue',sans-serif" font-size="11" letter-spacing="3">PEACE</text>
+        </svg>
+        <div class="sticker-name">Peace Sign</div>
+        <div class="sticker-tag">Fairey</div>
+      </div>
+
+      <!-- 10. HEART PEOPLE (Haring) -->
+      <div class="sticker">
+        <svg viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Two figures -->
+          <g transform="translate(-5,0)">
+            <circle cx="45" cy="25" r="10" fill="none" stroke="#FF3CAC" stroke-width="3"/>
+            <line x1="45" y1="35" x2="45" y2="65" stroke="#FF3CAC" stroke-width="3"/>
+            <line x1="45" y1="65" x2="35" y2="85" stroke="#FF3CAC" stroke-width="3" stroke-linecap="round"/>
+            <line x1="45" y1="65" x2="55" y2="85" stroke="#FF3CAC" stroke-width="3" stroke-linecap="round"/>
+            <path d="M45 45 L 65 55" stroke="#FF3CAC" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <g transform="translate(15,0)">
+            <circle cx="85" cy="25" r="10" fill="none" stroke="#FF3CAC" stroke-width="3"/>
+            <line x1="85" y1="35" x2="85" y2="65" stroke="#FF3CAC" stroke-width="3"/>
+            <line x1="85" y1="65" x2="75" y2="85" stroke="#FF3CAC" stroke-width="3" stroke-linecap="round"/>
+            <line x1="85" y1="65" x2="95" y2="85" stroke="#FF3CAC" stroke-width="3" stroke-linecap="round"/>
+            <path d="M85 45 L 65 55" stroke="#FF3CAC" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <!-- Heart above -->
+          <path d="M65 50 C 65 44, 56 44, 56 50 C 56 56, 65 60, 65 60 C 65 60, 74 56, 74 50 C 74 44, 65 44, 65 50" fill="#E3342F" transform="translate(5,-10)"/>
+          <!-- Energy -->
+          <line x1="65" y1="5" x2="65" y2="0" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="55" y1="7" x2="50" y2="2" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="75" y1="7" x2="80" y2="2" stroke="#FDFC47" stroke-width="2"/>
+        </svg>
+        <div class="sticker-name">Love People</div>
+        <div class="sticker-tag">Haring</div>
+      </div>
+
+      <!-- 11. EYE PYRAMID (Fairey + Basquiat) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Pyramid triangle -->
+          <polygon points="60,15 15,100 105,100" fill="none" stroke="#F5E6C8" stroke-width="3" stroke-linejoin="round"/>
+          <!-- Inner line -->
+          <line x1="38" y1="60" x2="82" y2="60" stroke="#F5E6C8" stroke-width="1.5"/>
+          <!-- All-seeing eye -->
+          <ellipse cx="60" cy="55" rx="18" ry="10" fill="none" stroke="#E3342F" stroke-width="2.5"/>
+          <circle cx="60" cy="55" r="6" fill="none" stroke="#3B82F6" stroke-width="2"/>
+          <circle cx="60" cy="55" r="2.5" fill="#3B82F6"/>
+          <!-- Rays from eye -->
+          <line x1="60" y1="42" x2="60" y2="35" stroke="#FFD700" stroke-width="1.5"/>
+          <line x1="72" y1="45" x2="78" y2="40" stroke="#FFD700" stroke-width="1.5"/>
+          <line x1="48" y1="45" x2="42" y2="40" stroke="#FFD700" stroke-width="1.5"/>
+          <!-- OBEY text -->
+          <text x="60" y="90" text-anchor="middle" fill="#E3342F" font-family="'Bebas Neue',sans-serif" font-size="14" letter-spacing="4">OBEY</text>
+        </svg>
+        <div class="sticker-name">Eye Pyramid</div>
+        <div class="sticker-tag">Fairey × Basquiat</div>
+      </div>
+
+      <!-- 12. CORAZÓN RADIANTE (Haring) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Big heart -->
+          <path d="M60 95 C 60 95, 15 65, 15 40 C 15 22, 35 18, 60 38 C 85 18, 105 22, 105 40 C 105 65, 60 95, 60 95 Z" fill="none" stroke="#E3342F" stroke-width="3.5"/>
+          <!-- Inner heart -->
+          <path d="M60 78 C 60 78, 32 58, 32 42 C 32 30, 44 28, 60 42 C 76 28, 88 30, 88 42 C 88 58, 60 78, 60 78 Z" fill="#E3342F" opacity="0.3"/>
+          <!-- Radiant lines -->
+          <line x1="60" y1="12" x2="60" y2="4" stroke="#FDFC47" stroke-width="2.5"/>
+          <line x1="40" y1="14" x2="35" y2="6" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="80" y1="14" x2="85" y2="6" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="105" y1="30" x2="115" y2="26" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="15" y1="30" x2="5" y2="26" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="8" y1="55" x2="2" y2="55" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="112" y1="55" x2="118" y2="55" stroke="#FDFC47" stroke-width="2"/>
+          <!-- Small crown -->
+          <path d="M50 20 L50 15 L48 17 L52 10 L56 17 L54 15 L54 20 Z" fill="#FFD700" stroke="none" transform="translate(4,-2)"/>
+        </svg>
+        <div class="sticker-name">Radiant Heart</div>
+        <div class="sticker-tag">Haring</div>
+      </div>
+
+      <!-- 13. SAMO TAG (Basquiat) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Rough box -->
+          <rect x="10" y="15" width="100" height="65" fill="none" stroke="#F5E6C8" stroke-width="2.5" rx="2"/>
+          <!-- SAMO© text -->
+          <text x="60" y="58" text-anchor="middle" fill="#F5E6C8" font-family="'Space Mono',monospace" font-size="28" font-weight="700">SAMO©</text>
+          <!-- Strike through -->
+          <line x1="15" y1="52" x2="105" y2="52" stroke="#E3342F" stroke-width="2.5"/>
+          <!-- Arrow right -->
+          <line x1="60" y1="80" x2="100" y2="80" stroke="#F5E6C8" stroke-width="2" marker-end="url(#arrowhead)"/>
+          <defs>
+            <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#F5E6C8"/>
+            </marker>
+          </defs>
+          <!-- Crown tiny -->
+          <path d="M78 10 L78 4 L76 6 L80 0 L84 6 L82 4 L82 10 Z" fill="#FFD700"/>
+        </svg>
+        <div class="sticker-name">SAMO Tag</div>
+        <div class="sticker-tag">Basquiat</div>
+      </div>
+
+      <!-- 14. ANDRE THE GIANT FACE (Fairey style) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Face outline -->
+          <rect x="25" y="20" width="70" height="80" rx="6" fill="none" stroke="#E3342F" stroke-width="3"/>
+          <!-- Hair -->
+          <rect x="25" y="20" width="70" height="15" fill="#E3342F" opacity="0.5"/>
+          <!-- Eyes -->
+          <rect x="35" y="45" width="18" height="8" fill="none" stroke="#F5E6C8" stroke-width="2"/>
+          <rect x="67" y="45" width="18" height="8" fill="none" stroke="#F5E6C8" stroke-width="2"/>
+          <rect x="40" y="47" width="8" height="4" fill="#F5E6C8"/>
+          <rect x="72" y="47" width="8" height="4" fill="#F5E6C8"/>
+          <!-- Nose -->
+          <path d="M56 58 L60 68 L64 58" fill="none" stroke="#F5E6C8" stroke-width="2"/>
+          <!-- Mouth -->
+          <line x1="42" y1="78" x2="78" y2="78" stroke="#F5E6C8" stroke-width="3"/>
+          <!-- Banner -->
+          <rect x="15" y="102" width="90" height="14" fill="#E3342F"/>
+          <text x="60" y="113" text-anchor="middle" fill="#F5E6C8" font-family="'Bebas Neue',sans-serif" font-size="11" letter-spacing="2">GIANT</text>
+        </svg>
+        <div class="sticker-name">Giant Face</div>
+        <div class="sticker-tag">Fairey</div>
+      </div>
+
+      <!-- 15. SNAKE (Haring) -->
+      <div class="sticker">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Snake body -->
+          <path d="M20 90 C 20 60, 50 40, 40 25 C 30 10, 60 5, 70 20 C 80 35, 60 50, 80 70 C 100 90, 110 50, 100 30"
+                fill="none" stroke="#00F260" stroke-width="4" stroke-linecap="round"/>
+          <!-- Head -->
+          <circle cx="100" cy="30" r="8" fill="none" stroke="#00F260" stroke-width="3"/>
+          <circle cx="98" cy="28" r="2" fill="#00F260"/>
+          <!-- Tongue -->
+          <path d="M108 30 L 115 26 M 108 30 L 115 34" stroke="#E3342F" stroke-width="2" stroke-linecap="round"/>
+          <!-- Energy -->
+          <line x1="30" y1="100" x2="25" y2="108" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="38" y1="102" x2="38" y2="110" stroke="#FDFC47" stroke-width="2"/>
+          <line x1="46" y1="98" x2="50" y2="106" stroke="#FDFC47" stroke-width="2"/>
+        </svg>
+        <div class="sticker-name">Serpent</div>
+        <div class="sticker-tag">Haring</div>
+      </div>
+
+      <!-- 16. DINOSAUR CROWN (Basquiat) -->
+      <div class="sticker">
+        <svg viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Crown -->
+          <path d="M40 28 L40 15 L37 20 L45 8 L50 18 L58 5 L66 18 L71 8 L79 20 L76 15 L76 28 Z" fill="none" stroke="#FFD700" stroke-width="2" stroke-linejoin="round"/>
+          <!-- Dino head -->
+          <path d="M30 65 L30 35 C 30 30, 85 25, 90 35 L 110 35 L110 55 L85 55 L85 65 Z" fill="none" stroke="#F5E6C8" stroke-width="3" stroke-linejoin="round"/>
+          <!-- Eye -->
+          <circle cx="50" cy="45" r="6" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+          <circle cx="50" cy="45" r="2.5" fill="#3B82F6"/>
+          <!-- Teeth -->
+          <path d="M85 55 L88 62 L91 55 L94 62 L97 55 L100 62 L103 55 L106 62 L110 55" stroke="#F5E6C8" stroke-width="2" fill="none"/>
+          <!-- Body -->
+          <line x1="55" y1="65" x2="55" y2="95" stroke="#F5E6C8" stroke-width="3"/>
+          <line x1="40" y1="65" x2="35" y2="95" stroke="#F5E6C8" stroke-width="3"/>
+          <line x1="70" y1="65" x2="75" y2="95" stroke="#F5E6C8" stroke-width="3"/>
+          <!-- Scratch -->
+          <text x="95" y="85" fill="#E3342F" font-family="'Space Mono',monospace" font-size="10" font-weight="700" transform="rotate(15,95,85)">REX</text>
+        </svg>
+        <div class="sticker-name">Dino Crown</div>
+        <div class="sticker-tag">Basquiat</div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <small>Catálogo visual · <span>mazoPegatas</span> · Keith Haring × Basquiat × OBEY</small>
+  </footer>
+</body>
+</html>
