@@ -1,0 +1,115 @@
+{
+  "rutas": [
+    {
+      "id": "2026-04-14-centro-proyecto1931",
+      "titulo": "14 de abril · vuelta por el Centro",
+      "fecha": "2026-04-14",
+      "color": "#E63946",
+      "nota": "primera salida tras Proyecto 1931 Fase 0",
+      "fotos": [
+        {
+          "src": "img/rutas/2026-04-14-centro-proyecto1931/01.jpg",
+          "thumb": "img/rutas/2026-04-14-centro-proyecto1931/01-thumb.jpg",
+          "lat": 40.4155,
+          "lng": -3.7074,
+          "timestamp": "2026-04-14T22:48:00+02:00",
+          "pegatina": "Radiant Baby",
+          "autor": "Haring",
+          "lugar": "Calle Mayor, 12",
+          "nota": "farola, lado norte"
+        },
+        {
+          "src": "img/rutas/2026-04-14-centro-proyecto1931/02.jpg",
+          "thumb": "img/rutas/2026-04-14-centro-proyecto1931/02-thumb.jpg",
+          "lat": 40.4168,
+          "lng": -3.7038,
+          "timestamp": "2026-04-14T23:02:00+02:00",
+          "pegatina": "OBEY Giant",
+          "autor": "Fairey",
+          "lugar": "Puerta del Sol",
+          "nota": "contenedor naranja"
+        },
+        {
+          "src": "img/rutas/2026-04-14-centro-proyecto1931/03.jpg",
+          "thumb": "img/rutas/2026-04-14-centro-proyecto1931/03-thumb.jpg",
+          "lat": 40.4175,
+          "lng": -3.7012,
+          "timestamp": "2026-04-14T23:18:00+02:00",
+          "pegatina": "Crown",
+          "autor": "Basquiat",
+          "lugar": "Calle Alcalá, 21",
+          "nota": "cajero automático"
+        }
+      ]
+    },
+    {
+      "id": "2026-04-20-tetuan-bloque-1",
+      "titulo": "Tetúan Bloque 1",
+      "fecha": "2026-04-20",
+      "color": "#E63946",
+      "fotos": [
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/01.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/01-thumb.jpg", "lat": 40.44664380555555, "lng": -3.7035810833333334, "timestamp": "2026-04-20T15:47:24.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/02.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/02-thumb.jpg", "lat": 40.446949, "lng": -3.7034630833333333, "timestamp": "2026-04-20T15:50:37.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/03.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/03-thumb.jpg", "lat": 40.446949, "lng": -3.7034630833333333, "timestamp": "2026-04-20T15:53:04.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/04.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/04-thumb.jpg", "lat": 40.446949, "lng": -3.7034630833333333, "timestamp": "2026-04-20T15:53:08.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/05.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/05-thumb.jpg", "lat": 40.44737625, "lng": -3.7023680277777777, "timestamp": "2026-04-20T15:55:29.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/06.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/06-thumb.jpg", "lat": 40.44961163888888, "lng": -3.6993811111111112, "timestamp": "2026-04-20T16:05:16.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/07.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/07-thumb.jpg", "lat": 40.44933316666666, "lng": -3.698497055555556, "timestamp": "2026-04-20T16:08:29.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/08.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/08-thumb.jpg", "lat": 40.44892119444444, "lng": -3.6949820000000004, "timestamp": "2026-04-20T16:17:53.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/09.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/09-thumb.jpg", "lat": 40.44892119444444, "lng": -3.6949820000000004, "timestamp": "2026-04-20T16:19:57.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/10.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/10-thumb.jpg", "lat": 40.44892119444444, "lng": -3.6949820000000004, "timestamp": "2026-04-20T16:20:24.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/11.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/11-thumb.jpg", "lat": 40.450420361111114, "lng": -3.6918270555555557, "timestamp": "2026-04-20T16:27:22.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/12.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/12-thumb.jpg", "lat": 40.45215986111111, "lng": -3.692914944444445, "timestamp": "2026-04-20T16:32:00.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/13.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/13-thumb.jpg", "lat": 40.45215986111111, "lng": -3.692914944444445, "timestamp": "2026-04-20T16:33:31.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/14.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/14-thumb.jpg", "lat": 40.452072138888894, "lng": -3.694158027777778, "timestamp": "2026-04-20T16:36:17.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/15.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/15-thumb.jpg", "lat": 40.45109175, "lng": -3.695090027777778, "timestamp": "2026-04-20T16:42:28.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/16.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/16-thumb.jpg", "lat": 40.45113752777778, "lng": -3.695132, "timestamp": "2026-04-20T16:42:40.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/17.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/17-thumb.jpg", "lat": 40.45113752777778, "lng": -3.695132, "timestamp": "2026-04-20T16:42:47.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/18.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/18-thumb.jpg", "lat": 40.45113752777778, "lng": -3.695132, "timestamp": "2026-04-20T16:44:32.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/19.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/19-thumb.jpg", "lat": 40.44941711111111, "lng": -3.6952230833333335, "timestamp": "2026-04-20T16:46:00.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/20.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/20-thumb.jpg", "lat": 40.449596388888885, "lng": -3.697823055555556, "timestamp": "2026-04-20T16:50:51.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/21.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/21-thumb.jpg", "lat": 40.449596388888885, "lng": -3.697823055555556, "timestamp": "2026-04-20T16:51:23.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/22.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/22-thumb.jpg", "lat": 40.449596388888885, "lng": -3.697823055555556, "timestamp": "2026-04-20T16:53:29.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/23.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/23-thumb.jpg", "lat": 40.450561500000006, "lng": -3.698314916666667, "timestamp": "2026-04-20T16:54:46.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/24.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/24-thumb.jpg", "lat": 40.45043944444445, "lng": -3.703803055555556, "timestamp": "2026-04-20T17:09:13.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/25.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/25-thumb.jpg", "lat": 40.45043944444445, "lng": -3.703803055555556, "timestamp": "2026-04-20T17:09:33.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/26.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/26-thumb.jpg", "lat": 40.45043944444445, "lng": -3.703803055555556, "timestamp": "2026-04-20T17:10:03.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/27.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/27-thumb.jpg", "lat": 40.44882963888889, "lng": -3.703607027777778, "timestamp": "2026-04-20T17:11:33.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/28.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/28-thumb.jpg", "lat": 40.44895169444444, "lng": -3.7036900833333335, "timestamp": "2026-04-20T17:11:39.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/29.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/29-thumb.jpg", "lat": 40.44895169444444, "lng": -3.7036900833333335, "timestamp": "2026-04-20T17:12:59.000Z" },
+        { "src": "img/rutas/2026-04-20-tetuan-bloque-1/30.jpg", "thumb": "img/rutas/2026-04-20-tetuan-bloque-1/30-thumb.jpg", "lat": 40.446647638888884, "lng": -3.703722944444445, "timestamp": "2026-04-20T17:17:04.000Z" }
+      ]
+    },
+    {
+      "id": "2026-04-18-malasana-noche",
+      "titulo": "18 de abril · malasaña de noche",
+      "fecha": "2026-04-18",
+      "color": "#FFD700",
+      "nota": "segunda salida",
+      "fotos": [
+        {
+          "src": "img/rutas/2026-04-18-malasana-noche/01.jpg",
+          "thumb": "img/rutas/2026-04-18-malasana-noche/01-thumb.jpg",
+          "lat": 40.4257,
+          "lng": -3.7054,
+          "timestamp": "2026-04-18T23:30:00+02:00",
+          "pegatina": "Barking Dog",
+          "autor": "Haring",
+          "lugar": "Calle Fuencarral, 48",
+          "nota": "puerta azul"
+        },
+        {
+          "src": "img/rutas/2026-04-18-malasana-noche/02.jpg",
+          "thumb": "img/rutas/2026-04-18-malasana-noche/02-thumb.jpg",
+          "lat": 40.4271,
+          "lng": -3.7031,
+          "timestamp": "2026-04-18T23:44:00+02:00",
+          "pegatina": "Dancing Figure",
+          "autor": "Haring",
+          "lugar": "Plaza del Dos de Mayo",
+          "nota": "banco"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,282 @@
+/* =========================================================
+   MAPA — layout, panel, bottom sheet, popups, lightbox
+   ========================================================= */
+.mapa-layout {
+  display: flex;
+  height: calc(100vh - var(--hero-h, 200px));
+  min-height: 500px;
+  overflow: hidden;
+}
+
+#map {
+  flex: 1;
+  position: relative;
+}
+
+/* ── Panel lateral ─────────────────────────────────────── */
+.panel {
+  width: 320px;
+  background: var(--dark);
+  border-left: 3px solid var(--red);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.panel-header {
+  padding: 16px;
+  border-bottom: 2px solid rgba(245,230,200,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.panel-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: var(--cream);
+}
+.btn-ver-todas {
+  background: transparent;
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+.btn-ver-todas:hover {
+  border-color: var(--red);
+  color: var(--cream);
+}
+
+.panel-scroll {
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 0;
+}
+.panel-scroll::-webkit-scrollbar { width: 4px; }
+.panel-scroll::-webkit-scrollbar-track { background: var(--dark); }
+.panel-scroll::-webkit-scrollbar-thumb { background: var(--red); }
+
+/* Ruta row */
+.ruta-row {
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(245,230,200,0.06);
+  transition: background 0.15s;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.ruta-row:hover { background: rgba(245,230,200,0.04); }
+.ruta-row.active { background: rgba(227,52,47,0.1); }
+
+.ruta-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+  border: 2px solid rgba(0,0,0,0.3);
+}
+.ruta-info { flex: 1; min-width: 0; }
+.ruta-titulo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+  color: var(--cream);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ruta-meta {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* Fotos expandidas */
+.ruta-fotos {
+  display: none;
+  padding: 8px 16px 12px 38px;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid rgba(245,230,200,0.06);
+}
+.ruta-fotos.open { display: flex; }
+
+.foto-thumb {
+  width: 60px; height: 60px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.foto-thumb:hover {
+  border-color: var(--red);
+  transform: scale(1.06);
+}
+.foto-thumb.highlighted { border-color: var(--neon-yellow); }
+
+/* Empty state */
+.panel-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  line-height: 1.8;
+}
+
+/* Panel footer */
+.panel-footer {
+  padding: 10px 16px;
+  border-top: 2px solid rgba(245,230,200,0.06);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* ── MapLibre popup override ────────────────────────────── */
+.maplibregl-popup-content {
+  background: var(--dark) !important;
+  border: 2px solid var(--red) !important;
+  border-radius: 0 !important;
+  padding: 10px !important;
+  color: var(--cream) !important;
+  font-family: 'Space Mono', monospace !important;
+  max-width: 200px;
+  box-shadow: 4px 4px 0 var(--red) !important;
+}
+.maplibregl-popup-tip { border-top-color: var(--red) !important; }
+.maplibregl-popup-close-button {
+  color: var(--cream) !important;
+  font-size: 18px !important;
+  padding: 4px 6px !important;
+}
+
+.popup-thumb {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  cursor: pointer;
+  border: 2px solid rgba(245,230,200,0.1);
+  margin-bottom: 6px;
+  display: block;
+}
+.popup-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+.popup-meta {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.popup-lugar { color: var(--neon-yellow); font-size: 10px; margin-top: 4px; }
+
+/* ── Lightbox mapa ──────────────────────────────────────── */
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.94);
+  z-index: 500;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+}
+.lightbox.open { display: flex; }
+
+.lb-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 92vw;
+  gap: 12px;
+}
+.lb-img-frame {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.lightbox img {
+  max-width: 76vw;
+  max-height: 72vh;
+  object-fit: contain;
+  border: 4px solid var(--red);
+  box-shadow: 0 0 60px rgba(227,52,47,0.3);
+  animation: lb-in 0.3s ease;
+}
+@keyframes lb-in {
+  from { transform: scale(0.88); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.lb-arrow {
+  background: var(--red);
+  color: var(--cream);
+  border: 2px solid var(--cream);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.lb-arrow:hover { background: var(--dark); }
+.lb-close {
+  position: absolute;
+  top: -56px; right: 0;
+  background: var(--red);
+  color: var(--cream);
+  border: 2px solid var(--cream);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.lb-caption {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  text-transform: uppercase;
+  text-align: center;
+  max-width: 600px;
+}
+.lb-caption strong { color: var(--cream); display: block; font-size: 13px; margin-bottom: 4px; }
+.lb-caption em { color: var(--neon-yellow); font-style: normal; }
+
+/* ── Bottom sheet (móvil) ───────────────────────────────── */
+@media (max-width: 768px) {
+  .mapa-layout { flex-direction: column; height: auto; }
+
+  #map { height: 55vh; }
+
+  .panel {
+    width: 100%;
+    border-left: none;
+    border-top: 3px solid var(--red);
+    max-height: 45vh;
+    overflow-y: auto;
+  }
+
+  .lightbox img { max-width: 92vw; max-height: 60vh; }
+  .lb-arrow { width: 36px; height: 36px; font-size: 20px; }
+}

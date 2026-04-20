@@ -1,0 +1,1017 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>mazoPegatas · Extractor de Pegatinas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream:#F5E6C8; --red:#E3342F; --black:#0A0A0A; --dark:#1A1A1A;
+      --neon-yellow:#FDFC47; --neon-green:#00F260; --neon-pink:#FF3CAC;
+      --blue:#3B82F6; --muted:#B8A88A; --danger:#ff4444;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Space Mono',monospace;background:var(--black);color:var(--cream);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+
+    /* ===== HEADER ===== */
+    .header{
+      padding:14px 24px;display:flex;align-items:center;gap:16px;flex-shrink:0;
+      border-bottom:3px solid var(--red);
+      background:repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(227,52,47,0.03) 20px,rgba(227,52,47,0.03) 22px),var(--dark);
+    }
+    .header h1{
+      font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;
+      color:var(--cream);text-transform:uppercase;
+      text-shadow:2px 2px 0 var(--red);
+    }
+    .badge{
+      background:var(--red);color:var(--cream);padding:3px 10px;
+      font-family:'Bebas Neue',sans-serif;font-size:12px;letter-spacing:2px;
+    }
+    .header-actions{margin-left:auto;display:flex;gap:8px;align-items:center;}
+    .header-hint{font-size:11px;color:var(--muted);letter-spacing:0.5px;}
+    .header-hint kbd{
+      background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:3px;
+      border:1px solid rgba(255,255,255,0.1);font-size:10px;
+    }
+
+    /* ===== LAYOUT ===== */
+    .app{display:flex;flex:1;overflow:hidden;}
+    .workspace{flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+    .sidebar{width:340px;background:var(--dark);border-left:3px solid var(--red);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+
+    /* ===== TOOLBAR ===== */
+    .toolbar{
+      display:flex;gap:6px;padding:10px 14px;background:rgba(255,255,255,0.015);
+      border-bottom:1px solid rgba(245,230,200,0.06);flex-wrap:wrap;align-items:center;flex-shrink:0;
+    }
+    .btn{
+      padding:7px 14px;font-family:'Bebas Neue',sans-serif;font-size:14px;
+      letter-spacing:1.5px;border:2px solid var(--red);background:transparent;
+      color:var(--cream);cursor:pointer;text-transform:uppercase;transition:all .12s;
+      white-space:nowrap;display:inline-flex;align-items:center;gap:5px;
+    }
+    .btn:hover{background:var(--red);color:var(--cream);}
+    .btn:active{transform:scale(0.96);}
+    .btn.active{background:var(--red);color:var(--cream);}
+    .btn.green{border-color:var(--neon-green);color:var(--neon-green);}
+    .btn.green:hover{background:var(--neon-green);color:var(--black);}
+    .btn.yellow{border-color:var(--neon-yellow);color:var(--neon-yellow);}
+    .btn.yellow:hover{background:var(--neon-yellow);color:var(--black);}
+    .btn.pink{border-color:var(--neon-pink);color:var(--neon-pink);}
+    .btn.pink:hover{background:var(--neon-pink);color:var(--black);}
+    .btn.danger{border-color:var(--danger);color:var(--danger);}
+    .btn.danger:hover{background:var(--danger);color:#fff;}
+    .btn-sm{padding:4px 9px;font-size:12px;letter-spacing:1px;}
+    .btn:disabled{opacity:0.3;cursor:not-allowed;pointer-events:none;}
+    .sep{width:1px;height:26px;background:rgba(245,230,200,0.1);margin:0 2px;}
+
+    /* Slider */
+    .ctrl-group{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:0.5px;color:var(--muted);}
+    .ctrl-group input[type=range]{width:90px;accent-color:var(--neon-yellow);cursor:pointer;height:4px;}
+    .ctrl-group select{
+      background:var(--dark);color:var(--cream);border:1px solid rgba(245,230,200,0.15);
+      padding:4px 8px;font-family:'Space Mono',monospace;font-size:11px;cursor:pointer;
+    }
+
+    /* ===== DROP ZONE ===== */
+    .drop-zone{
+      flex:1;display:flex;justify-content:center;align-items:center;
+      position:relative;overflow:hidden;background:#0d0d0d;
+    }
+    .drop-placeholder{
+      display:flex;flex-direction:column;align-items:center;gap:16px;
+      pointer-events:none;opacity:0.5;
+    }
+    .drop-placeholder .icon{font-size:64px;filter:grayscale(1);opacity:0.4;}
+    .drop-placeholder h2{
+      font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;
+      color:var(--muted);text-transform:uppercase;
+    }
+    .drop-placeholder p{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;}
+    .drop-zone.has-image .drop-placeholder{display:none;}
+    .drop-zone.dragover{
+      outline:4px dashed var(--neon-yellow);outline-offset:-4px;
+      background:rgba(253,252,71,0.02);
+    }
+
+    /* ===== CANVAS ===== */
+    .canvas-container{
+      position:relative;display:inline-block;
+      transform-origin:center;transition:transform 0.15s ease;
+    }
+    #canvas{display:block;cursor:crosshair;}
+
+    /* ===== SELECTION BOXES ===== */
+    .sel-box{
+      position:absolute;border:2.5px solid var(--neon-yellow);
+      background:rgba(253,252,71,0.06);pointer-events:none;
+      transition:border-color 0.15s;
+    }
+    .sel-box:hover{border-color:var(--neon-green);}
+    .sel-box .sel-num{
+      position:absolute;top:-1px;left:-1px;background:var(--red);color:var(--cream);
+      font-family:'Bebas Neue',sans-serif;font-size:12px;padding:0px 5px;line-height:18px;
+    }
+    .sel-box .sel-del{
+      position:absolute;top:-1px;right:-1px;background:rgba(255,68,68,0.9);color:#fff;
+      font-size:12px;width:18px;height:18px;display:flex;justify-content:center;align-items:center;
+      cursor:pointer;pointer-events:auto;transition:background 0.15s;
+    }
+    .sel-box .sel-del:hover{background:var(--danger);}
+    .sel-box .sel-resize{
+      position:absolute;bottom:-5px;right:-5px;width:10px;height:10px;
+      background:var(--neon-yellow);cursor:nwse-resize;pointer-events:auto;
+    }
+
+    /* Drawing rect */
+    .drawing-rect{
+      position:absolute;border:2px dashed var(--neon-pink);
+      background:rgba(255,60,172,0.08);pointer-events:none;
+      box-shadow:0 0 8px rgba(255,60,172,0.2);
+    }
+
+    /* Zoom info */
+    .zoom-info{
+      position:absolute;bottom:12px;left:12px;
+      background:rgba(0,0,0,0.7);padding:4px 10px;
+      font-size:11px;color:var(--muted);letter-spacing:1px;
+      backdrop-filter:blur(4px);border:1px solid rgba(245,230,200,0.06);
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar-header{
+      padding:14px 16px;border-bottom:1px solid rgba(245,230,200,0.08);
+      font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;
+      text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;
+      flex-shrink:0;
+    }
+    .sidebar-header .count{
+      background:var(--neon-yellow);color:var(--black);
+      font-size:14px;padding:1px 8px;font-weight:700;
+    }
+
+    /* Tab bar */
+    .tab-bar{
+      display:flex;flex-shrink:0;border-bottom:1px solid rgba(245,230,200,0.06);
+    }
+    .tab{
+      flex:1;padding:8px;text-align:center;font-family:'Bebas Neue',sans-serif;
+      font-size:14px;letter-spacing:1.5px;cursor:pointer;
+      color:var(--muted);border-bottom:2px solid transparent;transition:all .15s;
+    }
+    .tab:hover{color:var(--cream);}
+    .tab.active{color:var(--neon-yellow);border-bottom-color:var(--neon-yellow);}
+
+    /* Crops list */
+    .crops-scroll{flex:1;overflow-y:auto;padding:10px;}
+    .crops-scroll::-webkit-scrollbar{width:6px;}
+    .crops-scroll::-webkit-scrollbar-track{background:transparent;}
+    .crops-scroll::-webkit-scrollbar-thumb{background:rgba(245,230,200,0.1);border-radius:3px;}
+
+    .crop-item{
+      background:rgba(255,255,255,0.025);border:1px solid rgba(245,230,200,0.05);
+      border-radius:4px;margin-bottom:8px;overflow:hidden;
+      transition:border-color 0.15s;
+    }
+    .crop-item:hover{border-color:rgba(245,230,200,0.15);}
+    .crop-item img{width:100%;display:block;background:#111;max-height:180px;object-fit:contain;}
+    .crop-item .crop-bar{
+      display:flex;justify-content:space-between;align-items:center;padding:6px 8px;
+      background:rgba(0,0,0,0.2);
+    }
+    .crop-item .crop-label{font-size:11px;letter-spacing:0.5px;color:var(--muted);}
+    .crop-item .crop-btns{display:flex;gap:4px;}
+
+    .no-crops{text-align:center;padding:30px 16px;color:var(--muted);font-size:12px;line-height:1.6;}
+
+    /* Queue panel */
+    .queue-panel{display:none;flex-direction:column;flex:1;}
+    .queue-panel.active{display:flex;}
+    .queue-list{flex:1;overflow-y:auto;padding:10px;}
+    .queue-item{
+      display:flex;gap:8px;align-items:center;padding:8px;
+      border-bottom:1px solid rgba(245,230,200,0.04);font-size:12px;
+    }
+    .queue-item img{width:48px;height:48px;object-fit:cover;border:1px solid rgba(245,230,200,0.06);}
+    .queue-item .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);}
+    .queue-item.current{background:rgba(253,252,71,0.05);border-color:var(--neon-yellow);}
+    .queue-item.current .name{color:var(--neon-yellow);}
+    .queue-item.done .name{color:var(--neon-green);text-decoration:line-through;}
+
+    /* Bottom bar */
+    .sidebar-bottom{
+      padding:10px 12px;border-top:1px solid rgba(245,230,200,0.08);
+      display:flex;flex-direction:column;gap:6px;flex-shrink:0;
+    }
+
+    /* ===== STATUS BAR ===== */
+    .status-bar{
+      padding:5px 14px;background:var(--dark);border-top:1px solid rgba(245,230,200,0.04);
+      font-size:10px;color:var(--muted);letter-spacing:0.5px;display:flex;justify-content:space-between;
+      flex-shrink:0;
+    }
+
+    #file-input{display:none;}
+
+    /* Processing overlay */
+    .processing{
+      display:none;position:absolute;inset:0;background:rgba(0,0,0,0.7);
+      z-index:50;justify-content:center;align-items:center;
+      backdrop-filter:blur(4px);
+    }
+    .processing.show{display:flex;}
+    .processing-inner{text-align:center;}
+    .processing h3{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--neon-yellow);margin-bottom:8px;}
+    .spinner{
+      width:40px;height:40px;border:3px solid rgba(245,230,200,0.1);
+      border-top-color:var(--neon-yellow);border-radius:50%;animation:spin .8s linear infinite;
+      margin:0 auto 12px;
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* Minimap */
+    .minimap{
+      position:absolute;bottom:12px;right:12px;width:160px;
+      background:rgba(0,0,0,0.8);border:1px solid rgba(245,230,200,0.1);
+      overflow:hidden;display:none;z-index:10;
+    }
+    .minimap canvas{width:100%;display:block;}
+    .minimap .viewport{position:absolute;border:1px solid var(--neon-yellow);pointer-events:none;}
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>🔍 Extractor de Pegatinas</h1>
+    <div class="badge">Local</div>
+    <div class="header-actions">
+      <span class="header-hint"><kbd>Ctrl</kbd>+<kbd>Z</kbd> deshacer · <kbd>Space</kbd> siguiente · <kbd>+</kbd><kbd>-</kbd> zoom</span>
+    </div>
+  </header>
+
+  <div class="app">
+    <div class="workspace">
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <button class="btn" onclick="$('#file-input').click()">📂 Cargar</button>
+        <div class="sep"></div>
+        <button class="btn yellow" id="btn-detect" disabled onclick="autoDetect()">⚡ Auto-Detectar</button>
+        <div class="ctrl-group">
+          <span>Sens:</span>
+          <input type="range" id="sensitivity" min="8" max="90" value="30">
+          <span id="sens-val">30</span>
+        </div>
+        <div class="ctrl-group">
+          <span>Min tamaño:</span>
+          <select id="min-size">
+            <option value="0.001">Muy pequeño</option>
+            <option value="0.003" selected>Pequeño</option>
+            <option value="0.008">Mediano</option>
+            <option value="0.02">Grande</option>
+          </select>
+        </div>
+        <div class="sep"></div>
+        <button class="btn pink" id="btn-edges" disabled onclick="showEdgePreview()">👁 Ver Bordes</button>
+        <div class="sep"></div>
+        <button class="btn" id="btn-undo" disabled onclick="undo()">↩ Deshacer</button>
+        <button class="btn danger" onclick="clearSelections()">🗑 Limpiar</button>
+        <div class="sep"></div>
+        <div class="ctrl-group">
+          <span>Zoom:</span>
+          <button class="btn btn-sm" onclick="setZoom(zoomLevel-0.25)">−</button>
+          <span id="zoom-val">100%</span>
+          <button class="btn btn-sm" onclick="setZoom(zoomLevel+0.25)">+</button>
+          <button class="btn btn-sm" onclick="setZoom(1)">1:1</button>
+          <button class="btn btn-sm" onclick="fitZoom()">Fit</button>
+        </div>
+      </div>
+
+      <!-- Canvas area -->
+      <div class="drop-zone" id="drop-zone">
+        <div class="drop-placeholder" id="placeholder">
+          <div class="icon">📷</div>
+          <h2>Arrastra imágenes aquí</h2>
+          <p>o haz clic en 📂 Cargar<br>Acepta múltiples imágenes (cola de procesamiento)</p>
+        </div>
+
+        <div class="canvas-container" id="canvas-container" style="display:none;">
+          <canvas id="canvas"></canvas>
+        </div>
+
+        <!-- Processing overlay -->
+        <div class="processing" id="processing">
+          <div class="processing-inner">
+            <div class="spinner"></div>
+            <h3>Analizando imagen...</h3>
+            <p style="font-size:12px;color:var(--muted)">Detectando bordes y regiones de color</p>
+          </div>
+        </div>
+
+        <div class="zoom-info" id="zoom-info" style="display:none;">
+          <span id="zoom-display">100%</span> · <span id="status-coords">0×0</span>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <span id="status-text">Esperando imagen...</span>
+        <span id="status-file"></span>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        Recortes <span class="count" id="crop-count">0</span>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab active" data-tab="crops" onclick="switchTab('crops')">Pegatinas</div>
+        <div class="tab" data-tab="queue" onclick="switchTab('queue')">Cola <span id="queue-badge"></span></div>
+      </div>
+
+      <!-- Crops panel -->
+      <div class="crops-scroll" id="crops-panel">
+        <div class="no-crops" id="no-crops">
+          Sube una imagen y dibuja rectángulos<br>o usa ⚡ Auto-Detectar
+        </div>
+      </div>
+
+      <!-- Queue panel -->
+      <div class="queue-panel" id="queue-panel">
+        <div class="queue-list" id="queue-list">
+          <div class="no-crops">La cola está vacía</div>
+        </div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <button class="btn green" style="width:100%" id="btn-download-all" onclick="downloadAll()" disabled>⬇ Descargar Todas (PNG)</button>
+        <div style="display:flex;gap:6px;">
+          <button class="btn" style="flex:1" id="btn-next" onclick="nextImage()" disabled>Siguiente Imagen →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="file-input" accept="image/*" multiple onchange="handleFiles(this.files)">
+
+  <script>
+    // ===== SHORTCUTS =====
+    const $ = s => document.querySelector(s);
+    const $$ = s => document.querySelectorAll(s);
+
+    // ===== STATE =====
+    const canvas = $('#canvas');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const canvasContainer = $('#canvas-container');
+    const dropZone = $('#drop-zone');
+
+    let loadedImage = null;
+    let currentFileName = '';
+    let selections = []; // {x, y, w, h} in original image coords
+    let undoStack = [];
+    let zoomLevel = 1;
+    let isDrawing = false;
+    let drawStart = { x: 0, y: 0 };
+    let edgePreviewActive = false;
+    let imageQueue = []; // {file, name, thumb}
+    let currentQueueIdx = -1;
+
+    // ===== ZOOM =====
+    function setZoom(level) {
+      zoomLevel = Math.max(0.25, Math.min(4, level));
+      canvasContainer.style.transform = `scale(${zoomLevel})`;
+      $('#zoom-val').textContent = Math.round(zoomLevel * 100) + '%';
+      $('#zoom-display').textContent = Math.round(zoomLevel * 100) + '%';
+    }
+
+    function fitZoom() {
+      if (!loadedImage) return;
+      const maxW = dropZone.clientWidth - 40;
+      const maxH = dropZone.clientHeight - 40;
+      const ratio = Math.min(maxW / canvas.width, maxH / canvas.height, 1);
+      setZoom(ratio);
+    }
+
+    // ===== SENSITIVITY =====
+    $('#sensitivity').oninput = function() { $('#sens-val').textContent = this.value; };
+
+    // ===== DRAG & DROP =====
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+    dropZone.addEventListener('click', e => {
+      if (e.target === dropZone || e.target.closest('.drop-placeholder')) {
+        $('#file-input').click();
+      }
+    });
+
+    // ===== KEYBOARD =====
+    document.addEventListener('keydown', e => {
+      if (e.key === '+' || e.key === '=') setZoom(zoomLevel + 0.25);
+      if (e.key === '-') setZoom(zoomLevel - 0.25);
+      if (e.key === ' ') { e.preventDefault(); nextImage(); }
+      if (e.ctrlKey && e.key === 'z') { e.preventDefault(); undo(); }
+    });
+
+    // Mouse wheel zoom
+    dropZone.addEventListener('wheel', e => {
+      if (!loadedImage) return;
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -0.15 : 0.15;
+      setZoom(zoomLevel + delta);
+    }, { passive: false });
+
+    // ===== FILE HANDLING =====
+    function handleFiles(files) {
+      if (!files.length) return;
+      const newFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+      if (!newFiles.length) return;
+
+      // Add to queue
+      newFiles.forEach(f => {
+        const thumb = URL.createObjectURL(f);
+        imageQueue.push({ file: f, name: f.name, thumb, done: false });
+      });
+
+      renderQueue();
+
+      // If nothing loaded yet, load first
+      if (!loadedImage) {
+        currentQueueIdx = 0;
+        loadImageFromQueue(0);
+      }
+
+      $('#status-text').textContent = `${newFiles.length} imagen(es) añadidas a la cola`;
+      updateQueueBadge();
+    }
+
+    function loadImageFromQueue(idx) {
+      if (idx < 0 || idx >= imageQueue.length) return;
+      currentQueueIdx = idx;
+      const entry = imageQueue[idx];
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          loadedImage = img;
+          currentFileName = entry.name;
+
+          // Canvas at real image size (capped at 3000px for performance)
+          const maxDim = 3000;
+          let w = img.width, h = img.height;
+          if (w > maxDim || h > maxDim) {
+            const ratio = Math.min(maxDim / w, maxDim / h);
+            w = Math.round(w * ratio);
+            h = Math.round(h * ratio);
+          }
+
+          canvas.width = w;
+          canvas.height = h;
+          ctx.drawImage(img, 0, 0, w, h);
+
+          canvasContainer.style.display = 'inline-block';
+          dropZone.classList.add('has-image');
+          $('#zoom-info').style.display = 'block';
+          edgePreviewActive = false;
+
+          // Reset selections for this image
+          selections = [];
+          undoStack = [];
+          renderSelections();
+          renderCrops();
+          fitZoom();
+
+          $('#btn-detect').disabled = false;
+          $('#btn-edges').disabled = false;
+          $('#btn-undo').disabled = true;
+          $('#status-text').textContent = `${entry.name} — ${img.width}×${img.height}px`;
+          $('#status-file').textContent = `[${idx + 1}/${imageQueue.length}]`;
+
+          renderQueue();
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(entry.file);
+    }
+
+    function nextImage() {
+      if (currentQueueIdx >= 0) {
+        imageQueue[currentQueueIdx].done = true;
+      }
+      const nextIdx = imageQueue.findIndex((e, i) => i > currentQueueIdx && !e.done);
+      if (nextIdx >= 0) {
+        loadImageFromQueue(nextIdx);
+      } else {
+        $('#status-text').textContent = 'No hay más imágenes en la cola.';
+      }
+      $('#btn-next').disabled = !imageQueue.some((e, i) => i > (nextIdx >= 0 ? nextIdx : currentQueueIdx) && !e.done);
+      updateQueueBadge();
+      renderQueue();
+    }
+
+    // ===== DRAWING SELECTIONS =====
+    canvas.addEventListener('mousedown', e => {
+      if (edgePreviewActive) return; // no drawing on edge preview
+      const r = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / r.width;
+      const scaleY = canvas.height / r.height;
+      isDrawing = true;
+      drawStart = {
+        x: (e.clientX - r.left) * scaleX,
+        y: (e.clientY - r.top) * scaleY
+      };
+
+      const rect = document.createElement('div');
+      rect.className = 'drawing-rect';
+      rect.id = 'drawing-rect';
+      canvasContainer.appendChild(rect);
+    });
+
+    canvas.addEventListener('mousemove', e => {
+      const r = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / r.width;
+      const scaleY = canvas.height / r.height;
+      const mx = (e.clientX - r.left) * scaleX;
+      const my = (e.clientY - r.top) * scaleY;
+      $('#status-coords').textContent = `${Math.round(mx)}×${Math.round(my)}`;
+
+      if (!isDrawing) return;
+      const rect = $('#drawing-rect');
+      if (!rect) return;
+
+      // Convert back to display coords for the overlay
+      const left = Math.min(drawStart.x, mx) / scaleX;
+      const top = Math.min(drawStart.y, my) / scaleY;
+      const w = Math.abs(mx - drawStart.x) / scaleX;
+      const h = Math.abs(my - drawStart.y) / scaleY;
+      rect.style.left = left + 'px';
+      rect.style.top = top + 'px';
+      rect.style.width = w + 'px';
+      rect.style.height = h + 'px';
+    });
+
+    canvas.addEventListener('mouseup', e => {
+      if (!isDrawing) return;
+      isDrawing = false;
+      const rect = $('#drawing-rect');
+      if (rect) rect.remove();
+
+      const r = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / r.width;
+      const scaleY = canvas.height / r.height;
+      const mx = (e.clientX - r.left) * scaleX;
+      const my = (e.clientY - r.top) * scaleY;
+
+      const x = Math.round(Math.min(drawStart.x, mx));
+      const y = Math.round(Math.min(drawStart.y, my));
+      const w = Math.round(Math.abs(mx - drawStart.x));
+      const h = Math.round(Math.abs(my - drawStart.y));
+
+      if (w < 20 || h < 20) return;
+
+      pushUndo();
+      selections.push({ x, y, w, h });
+      renderSelections();
+      renderCrops();
+    });
+
+    // ===== UNDO =====
+    function pushUndo() {
+      undoStack.push(JSON.parse(JSON.stringify(selections)));
+      if (undoStack.length > 30) undoStack.shift();
+      $('#btn-undo').disabled = false;
+    }
+
+    function undo() {
+      if (!undoStack.length) return;
+      selections = undoStack.pop();
+      renderSelections();
+      renderCrops();
+      if (!undoStack.length) $('#btn-undo').disabled = true;
+    }
+
+    // ===== AUTO-DETECT =====
+    function autoDetect() {
+      if (!loadedImage) return;
+      $('#processing').classList.add('show');
+
+      // Use requestAnimationFrame to let UI update
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          pushUndo();
+          _runDetection();
+          $('#processing').classList.remove('show');
+        }, 50);
+      });
+    }
+
+    function _runDetection() {
+      const threshold = parseInt($('#sensitivity').value);
+      const minAreaRatio = parseFloat($('#min-size').value);
+
+      // Work at half resolution for speed
+      const scale = Math.min(1, 800 / Math.max(canvas.width, canvas.height));
+      const sw = Math.round(canvas.width * scale);
+      const sh = Math.round(canvas.height * scale);
+
+      const tmp = document.createElement('canvas');
+      tmp.width = sw; tmp.height = sh;
+      const tctx = tmp.getContext('2d', { willReadFrequently: true });
+
+      // Slight blur for noise reduction
+      tctx.filter = 'blur(1px)';
+      tctx.drawImage(loadedImage, 0, 0, sw, sh);
+      tctx.filter = 'none';
+
+      const imgData = tctx.getImageData(0, 0, sw, sh);
+      const d = imgData.data;
+
+      // Edge detection + saturation map
+      const edgeMap = new Float32Array(sw * sh);
+      for (let y = 1; y < sh - 1; y++) {
+        for (let x = 1; x < sw - 1; x++) {
+          const i = (y * sw + x) * 4;
+          const r = d[i], g = d[i+1], b = d[i+2];
+          const gray = r * 0.299 + g * 0.587 + b * 0.114;
+
+          // Sobel-like gradient
+          const iR = (y * sw + x + 1) * 4;
+          const iD = ((y+1) * sw + x) * 4;
+          const iL = (y * sw + x - 1) * 4;
+          const iU = ((y-1) * sw + x) * 4;
+
+          const grayR = d[iR] * 0.299 + d[iR+1] * 0.587 + d[iR+2] * 0.114;
+          const grayD = d[iD] * 0.299 + d[iD+1] * 0.587 + d[iD+2] * 0.114;
+          const grayL = d[iL] * 0.299 + d[iL+1] * 0.587 + d[iL+2] * 0.114;
+          const grayU = d[iU] * 0.299 + d[iU+1] * 0.587 + d[iU+2] * 0.114;
+
+          const gx = (grayR - grayL) * 0.5;
+          const gy = (grayD - grayU) * 0.5;
+          const edge = Math.sqrt(gx * gx + gy * gy);
+
+          // Saturation (stickers are colorful)
+          const maxC = Math.max(r, g, b), minC = Math.min(r, g, b);
+          const sat = maxC > 0 ? (maxC - minC) / maxC : 0;
+
+          // Combine: edges + high saturation
+          edgeMap[y * sw + x] = edge + sat * 80;
+        }
+      }
+
+      // Threshold to binary
+      const binary = new Uint8Array(sw * sh);
+      for (let i = 0; i < sw * sh; i++) {
+        binary[i] = edgeMap[i] > threshold ? 1 : 0;
+      }
+
+      // Morphological closing (dilate then erode) to fill gaps
+      const dilateR = 4;
+      const dilated = morphDilate(binary, sw, sh, dilateR);
+      const closed = morphErode(dilated, sw, sh, 2);
+
+      // Connected components
+      const labels = new Int32Array(sw * sh);
+      let labelId = 0;
+      const comps = [];
+
+      for (let y = 0; y < sh; y++) {
+        for (let x = 0; x < sw; x++) {
+          if (closed[y * sw + x] && !labels[y * sw + x]) {
+            labelId++;
+            const comp = floodFill(closed, labels, sw, sh, x, y, labelId);
+            comps.push(comp);
+          }
+        }
+      }
+
+      // Filter by size and aspect ratio
+      const totalArea = sw * sh;
+      const minArea = totalArea * minAreaRatio;
+      const maxArea = totalArea * 0.4;
+      const invScale = 1 / scale;
+
+      let detected = comps.filter(c => {
+        const bw = c.maxX - c.minX;
+        const bh = c.maxY - c.minY;
+        const boxArea = bw * bh;
+        const aspect = Math.max(bw, bh) / Math.max(Math.min(bw, bh), 1);
+        const fill = c.count / Math.max(boxArea, 1); // How filled is the bbox
+        return boxArea > minArea && boxArea < maxArea && aspect < 6 && fill > 0.08;
+      }).map(c => {
+        const pad = 10;
+        return {
+          x: Math.max(0, Math.round((c.minX - pad) * invScale)),
+          y: Math.max(0, Math.round((c.minY - pad) * invScale)),
+          w: Math.min(canvas.width, Math.round((c.maxX - c.minX + pad * 2) * invScale)),
+          h: Math.min(canvas.height, Math.round((c.maxY - c.minY + pad * 2) * invScale))
+        };
+      });
+
+      // Merge overlapping
+      detected = mergeBoxes(detected);
+
+      selections = selections.concat(detected);
+      renderSelections();
+      renderCrops();
+      $('#status-text').textContent = `⚡ ${detected.length} pegatinas detectadas · Dibuja más si falta alguna`;
+    }
+
+    function morphDilate(bin, w, h, r) {
+      const out = new Uint8Array(w * h);
+      for (let y = r; y < h - r; y++) {
+        for (let x = r; x < w - r; x++) {
+          let val = 0;
+          for (let dy = -r; dy <= r && !val; dy++)
+            for (let dx = -r; dx <= r && !val; dx++)
+              if (bin[(y+dy) * w + (x+dx)]) val = 1;
+          out[y * w + x] = val;
+        }
+      }
+      return out;
+    }
+
+    function morphErode(bin, w, h, r) {
+      const out = new Uint8Array(w * h);
+      for (let y = r; y < h - r; y++) {
+        for (let x = r; x < w - r; x++) {
+          let val = 1;
+          for (let dy = -r; dy <= r && val; dy++)
+            for (let dx = -r; dx <= r && val; dx++)
+              if (!bin[(y+dy) * w + (x+dx)]) val = 0;
+          out[y * w + x] = val;
+        }
+      }
+      return out;
+    }
+
+    function floodFill(bin, labels, w, h, sx, sy, label) {
+      const stack = [[sx, sy]];
+      let minX = sx, minY = sy, maxX = sx, maxY = sy, count = 0;
+      while (stack.length) {
+        const [cx, cy] = stack.pop();
+        if (cx < 0 || cx >= w || cy < 0 || cy >= h) continue;
+        const ci = cy * w + cx;
+        if (labels[ci] || !bin[ci]) continue;
+        labels[ci] = label;
+        count++;
+        if (cx < minX) minX = cx; if (cx > maxX) maxX = cx;
+        if (cy < minY) minY = cy; if (cy > maxY) maxY = cy;
+        stack.push([cx+1,cy],[cx-1,cy],[cx,cy+1],[cx,cy-1]);
+      }
+      return { minX, minY, maxX, maxY, count };
+    }
+
+    function mergeBoxes(boxes) {
+      let changed = true;
+      let result = boxes.slice();
+      while (changed) {
+        changed = false;
+        const merged = [];
+        const used = new Set();
+        for (let i = 0; i < result.length; i++) {
+          if (used.has(i)) continue;
+          let a = { ...result[i] };
+          for (let j = i + 1; j < result.length; j++) {
+            if (used.has(j)) continue;
+            if (boxesOverlap(a, result[j])) {
+              a = boxUnion(a, result[j]);
+              used.add(j);
+              changed = true;
+            }
+          }
+          merged.push(a);
+        }
+        result = merged;
+      }
+      return result;
+    }
+
+    function boxesOverlap(a, b) {
+      // With a small margin for near-touching boxes
+      const m = 5;
+      return !(a.x + a.w + m < b.x || b.x + b.w + m < a.x || a.y + a.h + m < b.y || b.y + b.h + m < a.y);
+    }
+
+    function boxUnion(a, b) {
+      const x = Math.min(a.x, b.x);
+      const y = Math.min(a.y, b.y);
+      return { x, y, w: Math.max(a.x + a.w, b.x + b.w) - x, h: Math.max(a.y + a.h, b.y + b.h) - y };
+    }
+
+    // ===== EDGE PREVIEW =====
+    function showEdgePreview() {
+      if (!loadedImage) return;
+      if (edgePreviewActive) {
+        // Restore original
+        ctx.drawImage(loadedImage, 0, 0, canvas.width, canvas.height);
+        edgePreviewActive = false;
+        $('#btn-edges').textContent = '👁 Ver Bordes';
+        return;
+      }
+
+      const threshold = parseInt($('#sensitivity').value);
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const d = imgData.data;
+      const out = ctx.createImageData(canvas.width, canvas.height);
+      const od = out.data;
+
+      for (let y = 1; y < canvas.height - 1; y++) {
+        for (let x = 1; x < canvas.width - 1; x++) {
+          const i = (y * canvas.width + x) * 4;
+          const gray = d[i] * 0.299 + d[i+1] * 0.587 + d[i+2] * 0.114;
+          const iR = (y * canvas.width + x + 1) * 4;
+          const iD = ((y+1) * canvas.width + x) * 4;
+          const grayR = d[iR] * 0.299 + d[iR+1] * 0.587 + d[iR+2] * 0.114;
+          const grayD = d[iD] * 0.299 + d[iD+1] * 0.587 + d[iD+2] * 0.114;
+          const edge = Math.sqrt((gray - grayR) ** 2 + (gray - grayD) ** 2);
+
+          const r = d[i], g = d[i+1], b = d[i+2];
+          const maxC = Math.max(r, g, b), minC = Math.min(r, g, b);
+          const sat = maxC > 0 ? (maxC - minC) / maxC : 0;
+          const val = edge + sat * 80;
+
+          const oi = i;
+          if (val > threshold) {
+            od[oi] = 253; od[oi+1] = 252; od[oi+2] = 71; od[oi+3] = 255; // neon yellow
+          } else {
+            od[oi] = 10; od[oi+1] = 10; od[oi+2] = 10; od[oi+3] = 255;
+          }
+        }
+      }
+      ctx.putImageData(out, 0, 0);
+      edgePreviewActive = true;
+      $('#btn-edges').textContent = '👁 Restaurar';
+    }
+
+    // ===== RENDER SELECTIONS =====
+    function renderSelections() {
+      canvasContainer.querySelectorAll('.sel-box').forEach(el => el.remove());
+      if (!loadedImage) return;
+
+      const r = canvas.getBoundingClientRect();
+      const dispW = r.width;
+      const dispH = r.height;
+      // But we need scale from canvas pixels to CSS display
+      // canvasContainer is scaled by zoom, so the canvas's CSS size = canvas.width/height * zoom
+      // But the overlays are children of canvasContainer which is already scaled
+      // So we just position relative to canvas pixel coords directly
+      // The CSS size of canvas = canvas.width x canvas.height (no CSS sizing applied)
+
+      selections.forEach((sel, i) => {
+        const div = document.createElement('div');
+        div.className = 'sel-box';
+        div.style.left = sel.x + 'px';
+        div.style.top = sel.y + 'px';
+        div.style.width = sel.w + 'px';
+        div.style.height = sel.h + 'px';
+
+        const num = document.createElement('span');
+        num.className = 'sel-num';
+        num.textContent = i + 1;
+        div.appendChild(num);
+
+        const del = document.createElement('span');
+        del.className = 'sel-del';
+        del.textContent = '✕';
+        del.onclick = () => { pushUndo(); selections.splice(i, 1); renderSelections(); renderCrops(); };
+        div.appendChild(del);
+
+        canvasContainer.appendChild(div);
+      });
+
+      $('#crop-count').textContent = selections.length;
+      $('#btn-download-all').disabled = selections.length === 0;
+    }
+
+    // ===== RENDER CROPS =====
+    function renderCrops() {
+      const panel = $('#crops-panel');
+      panel.innerHTML = '';
+
+      if (selections.length === 0) {
+        panel.innerHTML = '<div class="no-crops">Sube una imagen y dibuja rectángulos<br>o usa ⚡ Auto-Detectar</div>';
+        return;
+      }
+
+      selections.forEach((sel, i) => {
+        const cropC = document.createElement('canvas');
+        cropC.width = sel.w; cropC.height = sel.h;
+        const cropCtx = cropC.getContext('2d');
+        cropCtx.drawImage(loadedImage, sel.x, sel.y, sel.w, sel.h, 0, 0, sel.w, sel.h);
+        const dataUrl = cropC.toDataURL('image/png');
+
+        const item = document.createElement('div');
+        item.className = 'crop-item';
+
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        item.appendChild(img);
+
+        const bar = document.createElement('div');
+        bar.className = 'crop-bar';
+
+        const label = document.createElement('span');
+        label.className = 'crop-label';
+        label.textContent = `#${i+1} · ${sel.w}×${sel.h}`;
+        bar.appendChild(label);
+
+        const btns = document.createElement('div');
+        btns.className = 'crop-btns';
+
+        const dlBtn = document.createElement('button');
+        dlBtn.className = 'btn btn-sm green';
+        dlBtn.textContent = '⬇';
+        dlBtn.title = 'Descargar';
+        dlBtn.onclick = () => downloadCrop(dataUrl, i);
+        btns.appendChild(dlBtn);
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn btn-sm danger';
+        delBtn.textContent = '✕';
+        delBtn.title = 'Eliminar';
+        delBtn.onclick = () => { pushUndo(); selections.splice(i, 1); renderSelections(); renderCrops(); };
+        btns.appendChild(delBtn);
+
+        bar.appendChild(btns);
+        item.appendChild(bar);
+        panel.appendChild(item);
+      });
+    }
+
+    // ===== DOWNLOAD =====
+    function downloadCrop(dataUrl, idx) {
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      const baseName = currentFileName.replace(/\.[^.]+$/, '');
+      a.download = `${baseName}_pegatina_${idx + 1}.png`;
+      a.click();
+    }
+
+    function downloadAll() {
+      selections.forEach((sel, i) => {
+        const c = document.createElement('canvas');
+        c.width = sel.w; c.height = sel.h;
+        c.getContext('2d').drawImage(loadedImage, sel.x, sel.y, sel.w, sel.h, 0, 0, sel.w, sel.h);
+        setTimeout(() => {
+          const a = document.createElement('a');
+          const baseName = currentFileName.replace(/\.[^.]+$/, '');
+          a.href = c.toDataURL('image/png');
+          a.download = `${baseName}_pegatina_${i + 1}.png`;
+          a.click();
+        }, i * 250);
+      });
+      $('#status-text').textContent = `Descargando ${selections.length} pegatinas...`;
+    }
+
+    function clearSelections() {
+      if (selections.length) pushUndo();
+      selections = [];
+      renderSelections();
+      renderCrops();
+      if (edgePreviewActive && loadedImage) {
+        ctx.drawImage(loadedImage, 0, 0, canvas.width, canvas.height);
+        edgePreviewActive = false;
+        $('#btn-edges').textContent = '👁 Ver Bordes';
+      }
+      $('#status-text').textContent = 'Selecciones limpiadas.';
+    }
+
+    // ===== TABS & QUEUE =====
+    function switchTab(tab) {
+      $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+      $('#crops-panel').style.display = tab === 'crops' ? 'block' : 'none';
+      $('#queue-panel').classList.toggle('active', tab === 'queue');
+    }
+
+    function renderQueue() {
+      const list = $('#queue-list');
+      if (!imageQueue.length) {
+        list.innerHTML = '<div class="no-crops">La cola está vacía</div>';
+        return;
+      }
+      list.innerHTML = '';
+      imageQueue.forEach((entry, i) => {
+        const div = document.createElement('div');
+        div.className = 'queue-item' + (i === currentQueueIdx ? ' current' : '') + (entry.done ? ' done' : '');
+        div.innerHTML = `<img src="${entry.thumb}"><span class="name">${entry.name}</span>`;
+        div.onclick = () => { if (!entry.done) loadImageFromQueue(i); };
+        div.style.cursor = entry.done ? 'default' : 'pointer';
+        list.appendChild(div);
+      });
+
+      $('#btn-next').disabled = !imageQueue.some((e, i) => i > currentQueueIdx && !e.done);
+    }
+
+    function updateQueueBadge() {
+      const remaining = imageQueue.filter(e => !e.done).length;
+      $('#queue-badge').textContent = remaining > 0 ? `(${remaining})` : '';
+    }
+  </script>
+</body>
+</html>
