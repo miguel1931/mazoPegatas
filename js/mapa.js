@@ -81,7 +81,7 @@ function drawRutas() {
     // Marcadores
     fotosOrdenadas.forEach((foto, idx) => {
       const el = document.createElement('div');
-      el.style.cssText = 'width:16px;height:16px;cursor:pointer;';
+      el.style.cssText = 'width:44px;height:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;';
 
       const dot = document.createElement('div');
       dot.style.cssText = `
@@ -90,6 +90,7 @@ function drawRutas() {
         border: 3px solid #fff;
         border-radius: 50%;
         transition: transform 0.15s;
+        pointer-events: none;
       `;
       el.appendChild(dot);
 
@@ -274,6 +275,15 @@ document.addEventListener('keydown', e => {
 document.getElementById('lightbox').addEventListener('click', e => {
   if (e.target === e.currentTarget) closeLightbox();
 });
+
+// ── Swipe táctil lightbox ─────────────────────────────────
+let _lbTouchX = 0;
+const _lb = document.getElementById('lightbox');
+_lb.addEventListener('touchstart', e => { _lbTouchX = e.touches[0].clientX; }, { passive: true });
+_lb.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - _lbTouchX;
+  if (Math.abs(dx) > 50) { dx < 0 ? lbNext() : lbPrev(); }
+}, { passive: true });
 
 // ── Arrancar ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', initMap);
