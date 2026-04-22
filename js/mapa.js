@@ -98,18 +98,26 @@ function drawRutas() {
     // Hull
     const hull = convexHull(coords);
     if (hull.length >= 3) {
+      const cx = hull.reduce((s, p) => s + p[0], 0) / hull.length;
+      const cy = hull.reduce((s, p) => s + p[1], 0) / hull.length;
+      const expanded = hull.map(([x, y]) => {
+        const dx = x - cx, dy = y - cy;
+        const dist = Math.sqrt(dx*dx + dy*dy) || 1e-9;
+        const pad = 0.0012;
+        return [x + dx/dist * pad, y + dy/dist * pad];
+      });
       map.addSource(`hull-${ruta.id}`, {
         type: 'geojson',
         data: {
           type: 'Feature',
-          geometry: { type: 'Polygon', coordinates: [[...hull, hull[0]]] }
+          geometry: { type: 'Polygon', coordinates: [[...expanded, expanded[0]]] }
         }
       });
       map.addLayer({
         id: `hull-fill-${ruta.id}`,
         type: 'fill',
         source: `hull-${ruta.id}`,
-        paint: { 'fill-color': ruta.color, 'fill-opacity': 0.13 }
+        paint: { 'fill-color': ruta.color, 'fill-opacity': 0.20 }
       });
     }
 
@@ -231,7 +239,7 @@ function setActiveRuta(id) {
     if (map.getLayer(`ruta-line-${ruta.id}`))
       map.setPaintProperty(`ruta-line-${ruta.id}`, 'line-opacity', active ? 0.9 : 0.2);
     if (map.getLayer(`hull-fill-${ruta.id}`))
-      map.setPaintProperty(`hull-fill-${ruta.id}`, 'fill-opacity', active ? 0.13 : 0.03);
+      map.setPaintProperty(`hull-fill-${ruta.id}`, 'fill-opacity', active ? 0.20 : 0.05);
   });
 
   // Fit bounds
