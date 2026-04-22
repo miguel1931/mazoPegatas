@@ -17,14 +17,18 @@ function initMap() {
     style: {
       version: 8,
       sources: {
-        'stamen-toner': {
+        'carto-dark': {
           type: 'raster',
-          tiles: ['https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png'],
+          tiles: [
+            'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+            'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+            'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
+          ],
           tileSize: 256,
-          attribution: '© Stadia Maps © Stamen Design © OpenMapTiles © OpenStreetMap contributors'
+          attribution: '© OpenStreetMap contributors © CARTO'
         }
       },
-      layers: [{ id: 'stamen-toner', type: 'raster', source: 'stamen-toner' }]
+      layers: [{ id: 'carto-dark', type: 'raster', source: 'carto-dark' }]
     },
     center: [-3.7038, 40.4168],
     zoom: 13
