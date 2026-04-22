@@ -1,68 +1,4 @@
-const IMAGE_SERVER = 'http://localhost:3000';
-
-const FALLBACK_IMAGES = [
-  "https://i.ibb.co/nMDmWFz5/IMG20260329193013.jpg",
-  "https://i.ibb.co/SwgbBdsY/IMG20260329193041.jpg",
-  "https://i.ibb.co/fBKJ5tf/IMG20260329193050.jpg",
-  "https://i.ibb.co/cXrk4rVq/IMG20260329194115.jpg",
-  "https://i.ibb.co/KjTP8bDq/IMG20260329194117.jpg",
-  "https://i.ibb.co/Rf5dgR7/IMG20260329194147.jpg",
-  "https://i.ibb.co/r25ftmTx/IMG20260330141939.jpg",
-  "https://i.ibb.co/9Hw0HqQR/IMG20260330190941.jpg",
-  "https://i.ibb.co/tTYRc460/IMG20260330204838.jpg",
-  "https://i.ibb.co/8nJcqfLd/IMG20260318100703.jpg",
-  "https://i.ibb.co/0j2FyXt2/IMG20260319130712.jpg",
-  "https://i.ibb.co/xqfNhrrW/IMG20260319130716.jpg",
-  "https://i.ibb.co/rKtgKKL0/IMG20260319165027.jpg",
-  "https://i.ibb.co/QvwpVQXn/IMG20260320214811.jpg",
-  "https://i.ibb.co/9j1wnNR/IMG20260322114606.jpg",
-  "https://i.ibb.co/Q77zgdJT/IMG20260323122151.jpg",
-  "https://i.ibb.co/ymV85bQd/IMG20260323122239.jpg",
-  "https://i.ibb.co/8n9cHzRf/IMG20260324094941.jpg",
-  "https://i.ibb.co/F454Zm37/IMG20260324223202.jpg",
-  "https://i.ibb.co/hjFtDLf/IMG20260324224412.jpg",
-  "https://i.ibb.co/tTYRc460/IMG20260324224615.jpg",
-  "https://i.ibb.co/DPCjb6y7/IMG20260325185629.jpg",
-  "https://i.ibb.co/BHVztq9Y/IMG20260325190223.jpg",
-  "https://i.ibb.co/skvY30R/IMG20260326184454.jpg",
-  "https://i.ibb.co/rRBCXn0q/IMG20260328201141.jpg",
-  "https://i.ibb.co/qM9m3znk/IMG20260329193008.jpg",
-  "https://i.ibb.co/ZPQj5TJ/IMG20260329193010.jpg",
-  "https://i.ibb.co/PZb3VDVf/IMG20260329193015.jpg",
-  "https://i.ibb.co/8Dw6q4YN/IMG20260329193039.jpg",
-  "https://i.ibb.co/jkpp4ygS/IMG20260329193046.jpg",
-  "https://i.ibb.co/Lhh0qhm9/IMG20260329193942.jpg",
-  "https://i.ibb.co/7NjjsPZk/IMG20260330142058.jpg",
-  "https://i.ibb.co/CpNLQKMG/IMG20260330191355.jpg",
-  "https://i.ibb.co/sp8Spvwp/IMG20260330191357.jpg",
-  "https://i.ibb.co/gMCWZRBj/IMG20260318100707.jpg",
-  "https://i.ibb.co/YTR17cJ2/IMG20260319130713.jpg",
-  "https://i.ibb.co/cSMFfPv2/IMG20260320214814.jpg",
-  "https://i.ibb.co/ZzKX6WS0/IMG20260320214822.jpg",
-  "https://i.ibb.co/BxLV3hx/IMG20260320214847.jpg",
-  "https://i.ibb.co/5WMq1bsJ/IMG20260322114608.jpg",
-  "https://i.ibb.co/jpfPpJ9/IMG20260322114611.jpg",
-  "https://i.ibb.co/1GTzjBcK/IMG20260323122237.jpg",
-  "https://i.ibb.co/QvNjNkYS/IMG20260324223206.jpg",
-  "https://i.ibb.co/XxkPk76C/IMG20260324223209.jpg",
-  "https://i.ibb.co/MktV2vV1/IMG20260324223213.jpg",
-  "https://i.ibb.co/Y4wCMtwC/IMG20260324223842.jpg",
-  "https://i.ibb.co/xK9pDccF/IMG20260324230152.jpg",
-  "https://i.ibb.co/jZJGgNYG/IMG20260324230155.jpg",
-  "https://i.ibb.co/TxdDyGqZ/IMG20260325185825.jpg",
-  "https://i.ibb.co/LdkHzTTp/IMG20260325185827.jpg",
-  "https://i.ibb.co/N6R2J63w/IMG20260325185844.jpg",
-  "https://i.ibb.co/jkkHWkHR/IMG20260325190226.jpg",
-  "https://i.ibb.co/HfJ43jxC/IMG20260325190325.jpg",
-  "https://i.ibb.co/WvmnLcjK/IMG20260326184457.jpg",
-  "https://i.ibb.co/7dF3dG15/IMG20260328201145.jpg",
-  "https://i.ibb.co/dsX50FK0/IMG20260329105115.jpg",
-  "https://i.ibb.co/RT1LsnvC/IMG20260329191447.jpg",
-  "https://i.ibb.co/tPZx4rF7/IMG20260329191458.jpg"
-];
-
 let ALL_IMAGES = [];
-let serverOnline = false;
 
 // Lightbox state
 let lbImages = [];
@@ -81,35 +17,11 @@ function randBetween(min, max) {
   return (Math.random() * (max - min) + min).toFixed(2);
 }
 
-function updateStatus(online, count) {
-  const hint = document.querySelector('.hint');
-  if (online) {
-    hint.innerHTML = `<span style="color:#00F260">●</span> SERVIDOR · ${count} fotos — ⟳ REFRESH`;
-  } else {
-    hint.innerHTML = `<span style="color:#E3342F">●</span> OFFLINE · fallback — ⟳ REFRESH`;
-  }
-}
-
 async function loadImages() {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const res = await fetch(`${IMAGE_SERVER}/api/images`, { signal: controller.signal });
-    clearTimeout(timeout);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    if (data.length > 0) {
-      ALL_IMAGES = data.map(img => img.url);
-      serverOnline = true;
-      updateStatus(true, data.length);
-      return;
-    }
-  } catch (err) {
-    console.warn('Servidor no disponible, usando fallback:', err.message);
-  }
-  ALL_IMAGES = FALLBACK_IMAGES;
-  serverOnline = false;
-  updateStatus(false, FALLBACK_IMAGES.length);
+  const res = await fetch('data/rutas.json');
+  const data = await res.json();
+  ALL_IMAGES = data.rutas.flatMap(r => r.fotos.map(f => f.src));
+  document.querySelector('.hint').innerHTML = `⟳ REFRESH · ${ALL_IMAGES.length} fotos`;
 }
 
 function renderGrid(animate = true) {
@@ -167,9 +79,7 @@ function renderGrid(animate = true) {
 
 function updateCounter() {
   const el = document.getElementById('wall-counter');
-  if (el) {
-    el.innerHTML = `<strong>${ALL_IMAGES.length}</strong> pegatinas en este muro`;
-  }
+  if (el) el.innerHTML = `<strong>${ALL_IMAGES.length}</strong> fotos en el muro`;
 }
 
 function refreshWall() {
@@ -253,10 +163,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (e.target === e.currentTarget) closeLightbox();
   });
 
-  // Reconnect check
-  setInterval(async () => {
-    if (serverOnline) return;
-    await loadImages();
-    if (serverOnline) refreshWall();
-  }, 30000);
 });
