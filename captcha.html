@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>captcha · mazoPegatas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --cream:#F5E6C8;--red:#E3342F;--black:#0A0A0A;--dark:#1A1A1A;
+      --muted:#B8A88A;--yellow:#FDFC47;--green:#00F260;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:'Space Mono',monospace;
+      background:var(--black);color:var(--cream);
+      min-height:100vh;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;padding:24px;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .captcha-box{
+      background:var(--dark);
+      border:3px solid var(--red);
+      box-shadow:6px 6px 0 var(--red);
+      max-width:480px;width:100%;
+      padding:0;
+      position:relative;
+    }
+
+    .cap-header{
+      background:var(--red);
+      padding:12px 16px;
+      display:flex;align-items:center;gap:10px;
+    }
+    .cap-header svg{width:22px;height:22px;flex-shrink:0;}
+    .cap-prompt{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:17px;letter-spacing:1.5px;
+      line-height:1.2;
+    }
+    .cap-sub{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,230,200,.7);margin-top:2px;}
+
+    /* Grid de tiles */
+    .cap-grid{
+      display:grid;
+      gap:3px;
+      padding:12px;
+      background:var(--black);
+    }
+
+    .cap-tile{
+      position:relative;overflow:hidden;cursor:pointer;
+      border:3px solid transparent;
+      transition:border-color .12s,transform .1s;
+      aspect-ratio:1;
+    }
+    .cap-tile canvas{display:block;width:100%;height:100%;}
+    .cap-tile:hover{border-color:rgba(253,252,71,.5);}
+    .cap-tile.selected{border-color:var(--yellow);}
+    .cap-tile.selected::after{
+      content:'✓';
+      position:absolute;bottom:3px;right:4px;
+      color:var(--yellow);font-size:14px;font-weight:700;
+      text-shadow:0 0 4px #000,0 0 8px #000;
+      pointer-events:none;
+    }
+
+    /* Estado feedback */
+    .cap-tile.correct-hit{border-color:var(--green)!important;background:rgba(0,242,96,.15);}
+    .cap-tile.wrong-miss{border-color:var(--red)!important;background:rgba(227,52,47,.15);}
+
+    /* Footer */
+    .cap-footer{
+      padding:10px 12px;
+      border-top:2px solid rgba(245,230,200,.08);
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+    }
+    .cap-info{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+
+    .btn-verify{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:18px;letter-spacing:2px;
+      padding:8px 20px;
+      background:var(--red);color:var(--cream);
+      border:2px solid var(--cream);
+      cursor:pointer;transition:all .2s;
+    }
+    .btn-verify:hover{background:transparent;color:var(--cream);}
+    .btn-verify:disabled{opacity:.4;cursor:not-allowed;}
+
+    .btn-refresh{
+      background:transparent;border:1px solid var(--muted);
+      color:var(--muted);font-family:'Bebas Neue',sans-serif;
+      font-size:15px;letter-spacing:2px;padding:8px 12px;cursor:pointer;
+      transition:all .2s;
+    }
+    .btn-refresh:hover{border-color:var(--cream);color:var(--cream);}
+
+    /* Resultado */
+    .result-overlay{
+      display:none;position:absolute;inset:0;
+      align-items:center;justify-content:center;
+      flex-direction:column;gap:8px;
+      background:rgba(10,10,10,.88);
+      z-index:10;
+    }
+    .result-overlay.show{display:flex;}
+    .result-icon{font-size:48px;}
+    .result-msg{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:28px;letter-spacing:3px;text-align:center;
+    }
+    .result-sub{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center;}
+    .result-btn{
+      font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;
+      padding:8px 20px;background:var(--red);color:var(--cream);
+      border:2px solid var(--cream);cursor:pointer;margin-top:6px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="captcha-box">
+
+  <div class="cap-header">
+    <!-- Basquiat crown icon -->
+    <svg viewBox="0 0 80 50" fill="none" stroke="#FDFC47" stroke-width="3" stroke-linejoin="round">
+      <path d="M10 45L10 18L2 28L16 5L26 22L40 2L54 22L64 5L78 28L70 18L70 45Z"/>
+    </svg>
+    <div>
+      <div class="cap-prompt">marca todos los recuadros<br>que tengan una pegatina</div>
+      <div class="cap-sub">puede haber más de una · haz click en todos</div>
+    </div>
+  </div>
+
+  <div class="cap-grid" id="cap-grid" style="grid-template-columns:repeat(4,1fr)"></div>
+
+  <div class="cap-footer">
+    <div class="cap-info" id="cap-info">selecciona tiles</div>
+    <div style="display:flex;gap:6px">
+      <button class="btn-refresh" onclick="newChallenge()" title="nuevo desafío">↺</button>
+      <button class="btn-verify" id="btn-verify" onclick="verify()" disabled>verificar</button>
+    </div>
+  </div>
+
+  <div class="result-overlay" id="result">
+    <div class="result-icon" id="r-icon"></div>
+    <div class="result-msg" id="r-msg"></div>
+    <div class="result-sub" id="r-sub"></div>
+    <button class="result-btn" onclick="newChallenge()">intentar de nuevo</button>
+  </div>
+</div>
+
+<script>
+/*
+  Sistema:
+  - STICKER_POOL: crops de imágenes reales de pegatinas (tiles "correctos")
+  - NOISE_POOL: crops de zonas sin pegatina — fondos de las mismas fotos (tiles "distractor")
+  - Se mezclan aleatoriamente en una cuadrícula N×M
+  - El usuario debe marcar los sticker tiles
+  - Validación: necesita marcar ≥ umbral de los correctos y < umbral de falsos positivos
+
+  Los stickers se recortan del centro de cada imagen (zona más probable de la pegatina).
+  Los distractores se toman de las esquinas de las mismas imágenes (suelen ser fondo/pared).
+*/
+
+const STICKER_SRCS = [
+  "https://i.ibb.co/nMDmWFz5/IMG20260329193013.jpg",
+  "https://i.ibb.co/SwgbBdsY/IMG20260329193041.jpg",
+  "https://i.ibb.co/fBKJ5tf/IMG20260329193050.jpg",
+  "https://i.ibb.co/cXrk4rVq/IMG20260329194115.jpg",
+  "https://i.ibb.co/KjTP8bDq/IMG20260329194117.jpg",
+  "https://i.ibb.co/Rf5dgR7/IMG20260329194147.jpg",
+  "https://i.ibb.co/r25ftmTx/IMG20260330141939.jpg",
+  "https://i.ibb.co/9Hw0HqQR/IMG20260330190941.jpg",
+  "https://i.ibb.co/8nJcqfLd/IMG20260318100703.jpg",
+  "https://i.ibb.co/0j2FyXt2/IMG20260319130712.jpg",
+  "https://i.ibb.co/QvwpVQXn/IMG20260320214811.jpg",
+  "https://i.ibb.co/Q77zgdJT/IMG20260323122151.jpg",
+  "https://i.ibb.co/8n9cHzRf/IMG20260324094941.jpg",
+  "https://i.ibb.co/F454Zm37/IMG20260324223202.jpg",
+  "https://i.ibb.co/DPCjb6y7/IMG20260325185629.jpg",
+  "https://i.ibb.co/BHVztq9Y/IMG20260325190223.jpg",
+  "https://i.ibb.co/skvY30R/IMG20260326184454.jpg",
+  "https://i.ibb.co/rRBCXn0q/IMG20260328201141.jpg",
+];
+
+// Parámetros captcha
+const COLS = 4;
+const ROWS = 4;
+const TOTAL = COLS * ROWS;   // 16 tiles
+const N_STICKERS = 4;        // cuántos tiles tienen pegatina (siempre ≥1)
+const TILE_PX = 120;         // tamaño interno de cada tile en canvas
+
+// Estado del challenge actual
+let tiles = [];   // { canvas, isSticker }
+let selected = new Set();
+
+// ── Precarga de imágenes ──────────────────────────────────
+const imgCache = {};
+function loadImg(src) {
+  if (imgCache[src]) return Promise.resolve(imgCache[src]);
+  return new Promise((res, rej) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => { imgCache[src] = img; res(img); };
+    img.onerror = rej;
+    img.src = src;
+  });
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length-1; i>0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function rand(min, max) { return Math.random()*(max-min)+min; }
+
+// Recorta zona CENTRAL de la imagen (donde suele estar la pegatina)
+function cropCenter(img) {
+  const c = document.createElement('canvas');
+  c.width = c.height = TILE_PX;
+  const cx = img.naturalWidth, cy = img.naturalHeight;
+  const size = Math.min(cx, cy) * rand(0.35, 0.6);
+  const x = cx/2 - size/2 + rand(-cx*0.1, cx*0.1);
+  const y = cy/2 - size/2 + rand(-cy*0.1, cy*0.1);
+  c.getContext('2d').drawImage(img, x, y, size, size, 0, 0, TILE_PX, TILE_PX);
+  return c;
+}
+
+// Recorta zona de ESQUINA/BORDE (fondo, sin pegatina probablemente)
+function cropCorner(img) {
+  const c = document.createElement('canvas');
+  c.width = c.height = TILE_PX;
+  const cx = img.naturalWidth, cy = img.naturalHeight;
+  const size = Math.min(cx, cy) * rand(0.2, 0.35);
+  const corner = Math.floor(Math.random()*4);
+  let x, y;
+  switch(corner) {
+    case 0: x=0;         y=0;         break;
+    case 1: x=cx-size;   y=0;         break;
+    case 2: x=0;         y=cy-size;   break;
+    case 3: x=cx-size;   y=cy-size;   break;
+  }
+  // Añadir jitter
+  x = Math.max(0, Math.min(x + rand(-size*0.2, size*0.2), cx-size));
+  y = Math.max(0, Math.min(y + rand(-size*0.2, size*0.2), cy-size));
+  c.getContext('2d').drawImage(img, x, y, size, size, 0, 0, TILE_PX, TILE_PX);
+  return c;
+}
+
+// ── Generar nuevo challenge ───────────────────────────────
+async function newChallenge() {
+  document.getElementById('result').classList.remove('show');
+  selected.clear();
+  tiles = [];
+  document.getElementById('cap-grid').innerHTML = '<div style="grid-column:1/-1;padding:20px;text-align:center;color:var(--muted);font-size:10px;letter-spacing:2px">CARGANDO...</div>';
+  document.getElementById('btn-verify').disabled = true;
+  document.getElementById('cap-info').textContent = 'cargando imágenes…';
+
+  const pool = shuffle(STICKER_SRCS);
+  const nStickers = N_STICKERS;
+  const nNoise = TOTAL - nStickers;
+
+  // Cargar imágenes para stickers (N distintas) + distractores (de otras imágenes)
+  const stickerSrcs = pool.slice(0, nStickers);
+  const noiseSrcs = shuffle(pool.slice(nStickers)).slice(0, Math.min(nNoise, pool.length - nStickers));
+
+  try {
+    // Cargar stickers
+    const stickerImgs = await Promise.all(stickerSrcs.map(s => loadImg(s).catch(()=>null)));
+    const noiseImgs = await Promise.all(noiseSrcs.map(s => loadImg(s).catch(()=>null)));
+
+    const stickerTiles = stickerImgs
+      .filter(Boolean)
+      .map(img => ({ canvas: cropCenter(img), isSticker: true }));
+
+    // Si hay pocas imágenes noise, reusar sticker imgs para los distractores (crop de esquina)
+    const allForNoise = [...noiseImgs.filter(Boolean), ...stickerImgs.filter(Boolean)];
+    const noiseTiles = [];
+    while (noiseTiles.length < nNoise) {
+      const img = allForNoise[noiseTiles.length % allForNoise.length];
+      if (img) noiseTiles.push({ canvas: cropCorner(img), isSticker: false });
+      else break;
+    }
+
+    tiles = shuffle([...stickerTiles, ...noiseTiles]).slice(0, TOTAL);
+    renderGrid();
+  } catch(e) {
+    document.getElementById('cap-grid').innerHTML = '<div style="grid-column:1/-1;padding:20px;text-align:center;color:var(--red);font-size:10px;letter-spacing:2px">error cargando imágenes</div>';
+  }
+}
+
+function renderGrid() {
+  const grid = document.getElementById('cap-grid');
+  grid.style.gridTemplateColumns = `repeat(${COLS},1fr)`;
+  grid.innerHTML = '';
+  selected.clear();
+  document.getElementById('btn-verify').disabled = true;
+  document.getElementById('cap-info').textContent = 'selecciona los que tienen pegatina';
+
+  tiles.forEach((tile, i) => {
+    const div = document.createElement('div');
+    div.className = 'cap-tile';
+    div.appendChild(tile.canvas);
+    div.addEventListener('click', () => toggleTile(i, div));
+    grid.appendChild(div);
+  });
+}
+
+function toggleTile(i, el) {
+  if (selected.has(i)) { selected.delete(i); el.classList.remove('selected'); }
+  else { selected.add(i); el.classList.add('selected'); }
+  const n = selected.size;
+  document.getElementById('cap-info').textContent = n ? `${n} seleccionado${n>1?'s':''}` : 'selecciona los que tienen pegatina';
+  document.getElementById('btn-verify').disabled = n === 0;
+}
+
+// ── Verificar ─────────────────────────────────────────────
+function verify() {
+  const correct = tiles.map((t,i) => t.isSticker ? i : -1).filter(i=>i>=0);
+  const hits = [...selected].filter(i => correct.includes(i));
+  const falsePos = [...selected].filter(i => !correct.includes(i));
+
+  // Mostrar feedback visual
+  document.querySelectorAll('.cap-tile').forEach((el, i) => {
+    if (tiles[i].isSticker && selected.has(i)) el.classList.add('correct-hit');
+    else if (!tiles[i].isSticker && selected.has(i)) el.classList.add('wrong-miss');
+    else if (tiles[i].isSticker && !selected.has(i)) el.classList.add('wrong-miss'); // perdida
+  });
+
+  const hitRate = hits.length / correct.length;
+  const fpRate  = falsePos.length / (TOTAL - correct.length);
+  const pass    = hitRate >= 0.75 && fpRate <= 0.25;
+
+  // Enviar respuesta a Formspree (sin bloquear el flujo)
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({
+      access_key: 'da787e84-d6c5-4219-b413-71695c90f5c8',
+      subject: `captcha ${pass ? 'PASS' : 'FAIL'} · mazoPegatas`,
+      timestamp: new Date().toISOString(),
+      pass,
+      hits: hits.length,
+      total_stickers: correct.length,
+      false_positives: falsePos.length,
+      selected_indices: [...selected].sort((a,b)=>a-b).join(','),
+      correct_indices: correct.join(','),
+    })
+  }).catch(() => {}); // silencioso — no bloquea si falla
+
+  setTimeout(() => showResult(pass, hits.length, correct.length), 600);
+}
+
+function showResult(pass, hits, total) {
+  const overlay = document.getElementById('result');
+  document.getElementById('r-icon').textContent = pass ? '🎯' : '✕';
+  document.getElementById('r-msg').textContent = pass ? '¡CORRECTO!' : 'INTÉNTALO DE NUEVO';
+  document.getElementById('r-msg').style.color = pass ? 'var(--green)' : 'var(--red)';
+  document.getElementById('r-sub').textContent = pass
+    ? `${hits} de ${total} pegatinas identificadas`
+    : `solo ${hits} de ${total} — revisa los recuadros`;
+  overlay.classList.add('show');
+}
+
+// Arrancar
+newChallenge();
+</script>
+</body>
+</html>

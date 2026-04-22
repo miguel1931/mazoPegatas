@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>etiquetar captchas · mazoPegatas</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0D0D0D;--surface:#181818;--surface2:#222;
+      --cream:#F5E6C8;--red:#E3342F;--muted:#B8A88A;
+      --cyan:#00E5FF;--yellow:#FDFC47;--green:#00F260;
+      --border:rgba(0,229,255,0.2);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Space Mono',monospace;background:var(--bg);color:var(--cream);font-size:13px;height:100vh;display:flex;flex-direction:column;}
+    header{background:var(--surface);border-bottom:3px solid var(--cyan);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--cyan);}
+    .subtitle{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+    a.back{color:var(--muted);text-decoration:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--border);padding:6px 12px;transition:all .2s;}
+    a.back:hover{color:var(--cyan);border-color:var(--cyan);}
+
+    .layout{display:grid;grid-template-columns:1fr 300px;flex:1;overflow:hidden;}
+
+    /* ── Canvas ── */
+    .canvas-panel{display:flex;flex-direction:column;padding:14px;gap:10px;overflow:hidden;}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex-shrink:0;}
+    .btn{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;padding:7px 16px;border:2px solid;cursor:pointer;text-transform:uppercase;display:inline-flex;align-items:center;gap:5px;transition:all .2s;background:transparent;}
+    .btn-cyan{color:var(--cyan);border-color:var(--cyan);}
+    .btn-cyan:hover,.btn-cyan.active{background:var(--cyan);color:var(--bg);}
+    .btn-cream{color:var(--cream);border-color:var(--muted);}
+    .btn-cream:hover{border-color:var(--cream);}
+    .btn-green{color:var(--green);border-color:var(--green);}
+    .btn-green:hover{background:var(--green);color:#000;}
+    .btn-red{color:var(--red);border-color:var(--red);}
+    .btn-red:hover{background:var(--red);color:#fff;}
+    .btn:disabled{opacity:.3;cursor:not-allowed;}
+
+    .grid-size-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);letter-spacing:1px;}
+    .grid-size-row input{width:48px;background:var(--surface2);border:1px solid var(--border);color:var(--cream);font-family:'Space Mono',monospace;font-size:12px;padding:4px 6px;text-align:center;}
+    .grid-size-row input:focus{outline:none;border-color:var(--cyan);}
+
+    .canvas-wrap{flex:1;position:relative;overflow:hidden;background:#111;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
+    #main-canvas{display:block;max-width:100%;max-height:100%;}
+
+    /* Tile overlay sobre canvas */
+    #tile-overlay{position:absolute;inset:0;pointer-events:none;}
+    .tile-cell{position:absolute;border:1px solid rgba(0,229,255,0.25);cursor:pointer;pointer-events:all;transition:background .1s;}
+    .tile-cell:hover{background:rgba(0,229,255,0.12);}
+    .tile-cell.marked{background:rgba(253,252,71,0.35);border-color:var(--yellow);}
+    .tile-cell.marked::after{content:'✓';position:absolute;bottom:2px;right:3px;color:var(--yellow);font-size:11px;font-weight:700;text-shadow:0 0 3px #000;pointer-events:none;}
+
+    #drop-hint{position:absolute;color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase;text-align:center;}
+    #status{font-size:10px;color:var(--muted);letter-spacing:1px;min-height:16px;flex-shrink:0;}
+    #status.ok{color:var(--green);}#status.err{color:var(--red);}
+
+    /* ── Panel derecho ── */
+    .side{background:var(--surface);border-left:2px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+    .side-hdr{padding:12px 14px;border-bottom:1px solid var(--border);font-family:'Bebas Neue',sans-serif;font-size:17px;letter-spacing:2px;display:flex;align-items:center;justify-content:space-between;}
+    .badge{background:var(--red);color:#fff;font-family:'Space Mono',monospace;font-size:10px;padding:2px 7px;}
+
+    /* Lista de captchas creados */
+    .captcha-list{flex:1;overflow-y:auto;padding:8px;}
+    .captcha-list::-webkit-scrollbar{width:3px;}
+    .captcha-list::-webkit-scrollbar-thumb{background:var(--red);}
+    .cap-item{background:var(--surface2);border:1px solid var(--border);padding:8px 10px;margin-bottom:6px;display:flex;gap:8px;align-items:center;}
+    .cap-thumb{width:48px;height:48px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;}
+    .cap-info{flex:1;min-width:0;}
+    .cap-name{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .cap-meta{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+    .cap-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:14px;line-height:1;flex-shrink:0;}
+
+    /* Exportar */
+    .export-box{padding:12px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
+    .info-box{background:var(--surface2);border:1px solid var(--border);padding:8px 10px;font-size:10px;color:var(--muted);letter-spacing:1px;line-height:1.7;}
+
+    /* Nav fotos */
+    .nav-fotos{display:flex;align-items:center;gap:6px;}
+    .nav-fotos span{font-size:10px;color:var(--muted);min-width:60px;text-align:center;letter-spacing:1px;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="title">etiquetar captchas</div>
+    <div class="subtitle">marca los tiles con pegatina · exporta la clave · los visitantes resuelven</div>
+  </div>
+  <a href="admin.html" class="back">← admin</a>
+</header>
+
+<div class="layout">
+  <div class="canvas-panel">
+    <div class="toolbar">
+      <button class="btn btn-cyan" onclick="document.getElementById('fi').click()">📂 abrir fotos</button>
+      <input id="fi" type="file" accept="image/*" multiple style="display:none">
+
+      <div class="nav-fotos">
+        <button class="btn btn-cream" id="btn-prev" onclick="nav(-1)" disabled>←</button>
+        <span id="foto-n">— / —</span>
+        <button class="btn btn-cream" id="btn-next" onclick="nav(1)" disabled>→</button>
+      </div>
+
+      <div class="grid-size-row">
+        cols <input type="number" id="g-cols" value="7" min="3" max="12" onchange="rebuildGrid()">
+        rows <input type="number" id="g-rows" value="5" min="2" max="10" onchange="rebuildGrid()">
+      </div>
+
+      <button class="btn btn-cream" onclick="clearMarked()">borrar marcas</button>
+      <button class="btn btn-green" id="btn-save" onclick="saveCaptcha()" disabled>+ guardar captcha</button>
+    </div>
+
+    <div id="status"></div>
+
+    <div class="canvas-wrap" id="wrap">
+      <canvas id="main-canvas"></canvas>
+      <div id="tile-overlay"></div>
+      <div id="drop-hint">arrastra fotos aquí o usa abrir</div>
+    </div>
+  </div>
+
+  <div class="side">
+    <div class="side-hdr">
+      Captchas
+      <span class="badge" id="cap-count">0</span>
+    </div>
+    <div class="captcha-list" id="cap-list">
+      <div style="padding:20px;text-align:center;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase">
+        guarda captchas para<br>exportar la clave
+      </div>
+    </div>
+    <div class="export-box">
+      <div class="info-box">
+        flujo: abre foto → marca tiles → guardar captcha → exportar JSON → copiar a data/captchas.json
+      </div>
+      <button class="btn btn-green" onclick="exportJSON()" id="btn-export" disabled>⬇ exportar captchas.json</button>
+      <button class="btn btn-cream" onclick="copyJSON()" id="btn-copy" disabled>copiar JSON</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let fotos = [];
+let fotoIdx = 0;
+let markedTiles = new Set();
+let captchas = [];  // { imgDataURL, thumbDataURL, name, cols, rows, answers[] }
+let tileCount = { cols: 7, rows: 5 };
+
+const mc = document.getElementById('main-canvas');
+const ctx = mc.getContext('2d');
+const wrap = document.getElementById('wrap');
+const tileOvl = document.getElementById('tile-overlay');
+
+// ── Cargar fotos ──────────────────────────────────────────
+document.getElementById('fi').addEventListener('change', e => loadFiles([...e.target.files]));
+wrap.addEventListener('dragover', e => e.preventDefault());
+wrap.addEventListener('drop', e => { e.preventDefault(); loadFiles([...e.dataTransfer.files].filter(f=>f.type.startsWith('image/'))); });
+
+function loadFiles(files) {
+  let n = 0;
+  files.forEach(file => {
+    const img = new Image();
+    img.onload = () => {
+      fotos.push({ file, img, name: file.name.replace(/\.[^.]+$/,'') });
+      if (++n === files.length) { fotoIdx = fotos.length - files.length; showFoto(); }
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+function showFoto() {
+  if (!fotos.length) return;
+  const { img, name } = fotos[fotoIdx];
+  document.getElementById('drop-hint').style.display = 'none';
+  mc.width = img.naturalWidth;
+  mc.height = img.naturalHeight;
+  ctx.drawImage(img, 0, 0);
+  markedTiles.clear();
+  buildTileOverlay();
+  document.getElementById('foto-n').textContent = `${fotoIdx+1} / ${fotos.length}`;
+  document.getElementById('btn-prev').disabled = fotoIdx === 0;
+  document.getElementById('btn-next').disabled = fotoIdx === fotos.length-1;
+  document.getElementById('btn-save').disabled = false;
+  setStatus(name);
+}
+
+function nav(d) {
+  const next = fotoIdx + d;
+  if (next < 0 || next >= fotos.length) return;
+  fotoIdx = next;
+  markedTiles.clear();
+  showFoto();
+}
+
+// ── Grid de tiles ─────────────────────────────────────────
+function rebuildGrid() {
+  tileCount.cols = parseInt(document.getElementById('g-cols').value) || 7;
+  tileCount.rows = parseInt(document.getElementById('g-rows').value) || 5;
+  if (fotos.length) buildTileOverlay();
+}
+
+function buildTileOverlay() {
+  tileOvl.innerHTML = '';
+  const rect = mc.getBoundingClientRect();
+  if (!rect.width) { requestAnimationFrame(buildTileOverlay); return; }
+
+  const { cols, rows } = tileCount;
+  const tw = rect.width / cols;
+  const th = rect.height / rows;
+
+  const wrapRect = wrap.getBoundingClientRect();
+  const offX = rect.left - wrapRect.left;
+  const offY = rect.top - wrapRect.top;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const idx = r * cols + c;
+      const cell = document.createElement('div');
+      cell.className = 'tile-cell' + (markedTiles.has(idx) ? ' marked' : '');
+      cell.style.left = (offX + c * tw) + 'px';
+      cell.style.top  = (offY + r * th) + 'px';
+      cell.style.width = tw + 'px';
+      cell.style.height = th + 'px';
+      cell.dataset.idx = idx;
+      cell.addEventListener('click', () => toggleTile(idx, cell));
+      tileOvl.appendChild(cell);
+    }
+  }
+  updateStatus();
+}
+
+function toggleTile(idx, cell) {
+  if (markedTiles.has(idx)) { markedTiles.delete(idx); cell.classList.remove('marked'); }
+  else { markedTiles.add(idx); cell.classList.add('marked'); }
+  updateStatus();
+}
+
+function clearMarked() {
+  markedTiles.clear();
+  tileOvl.querySelectorAll('.tile-cell').forEach(c => c.classList.remove('marked'));
+  updateStatus();
+}
+
+function updateStatus() {
+  const n = markedTiles.size;
+  setStatus(n ? `${n} tile${n>1?'s':''} marcado${n>1?'s':''}` : 'haz click en los tiles con pegatina');
+}
+
+// ── Guardar captcha ───────────────────────────────────────
+function saveCaptcha() {
+  if (!fotos.length) return;
+  if (!markedTiles.size) { setStatus('marca al menos un tile con pegatina', 'err'); return; }
+
+  const { img, name } = fotos[fotoIdx];
+  const { cols, rows } = tileCount;
+
+  // Thumb 120×90
+  const th = document.createElement('canvas');
+  th.width = 120; th.height = 90;
+  th.getContext('2d').drawImage(img, 0, 0, 120, 90);
+
+  captchas.push({
+    id: `cap-${Date.now()}`,
+    name,
+    imgSrc: name,  // se referencia al src original — en prod se usa la URL del repo
+    imgDataURL: mc.toDataURL('image/jpeg', 0.85),
+    thumbDataURL: th.toDataURL('image/jpeg', 0.7),
+    cols, rows,
+    answers: [...markedTiles].sort((a,b)=>a-b)
+  });
+
+  renderCapList();
+  setStatus(`captcha guardado: ${name} (${markedTiles.size} respuestas)`, 'ok');
+  markedTiles.clear();
+  buildTileOverlay();
+}
+
+function renderCapList() {
+  const list = document.getElementById('cap-list');
+  list.innerHTML = '';
+  captchas.forEach((cap, i) => {
+    const item = document.createElement('div');
+    item.className = 'cap-item';
+    item.innerHTML = `
+      <img class="cap-thumb" src="${cap.thumbDataURL}" alt="">
+      <div class="cap-info">
+        <div class="cap-name">${cap.name}</div>
+        <div class="cap-meta">${cap.cols}×${cap.rows} grid · ${cap.answers.length} respuesta${cap.answers.length>1?'s':''}</div>
+      </div>
+      <button class="cap-del" onclick="removeCap(${i})">✕</button>
+    `;
+    list.appendChild(item);
+  });
+  document.getElementById('cap-count').textContent = captchas.length;
+  document.getElementById('btn-export').disabled = !captchas.length;
+  document.getElementById('btn-copy').disabled = !captchas.length;
+}
+
+function removeCap(i) { captchas.splice(i,1); renderCapList(); }
+
+// ── Exportar JSON ─────────────────────────────────────────
+function buildExportData() {
+  return captchas.map(cap => ({
+    id: cap.id,
+    name: cap.name,
+    img: cap.imgDataURL,    // embed base64 para funcionar sin servidor de imágenes
+    cols: cap.cols,
+    rows: cap.rows,
+    answers: cap.answers    // índices correctos (0-based, row-major)
+  }));
+}
+
+function exportJSON() {
+  const data = buildExportData();
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'captchas.json';
+  a.click();
+  setStatus(`exportado: ${captchas.length} captcha${captchas.length>1?'s':''}`, 'ok');
+}
+
+function copyJSON() {
+  const json = JSON.stringify(buildExportData(), null, 2);
+  navigator.clipboard.writeText(json).then(() => {
+    setStatus('JSON copiado al portapapeles', 'ok');
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✓ copiado';
+    setTimeout(() => btn.textContent = 'copiar JSON', 2000);
+  });
+}
+
+// ── Utils ─────────────────────────────────────────────────
+function setStatus(msg, type) {
+  const el = document.getElementById('status');
+  el.textContent = msg; el.className = type || '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight') nav(1);
+  if (e.key === 'ArrowLeft') nav(-1);
+  if (e.key === 'Enter') saveCaptcha();
+  if (e.key === 'Escape') clearMarked();
+});
+
+// Redibujar overlay al redimensionar
+new ResizeObserver(() => { if (fotos.length) buildTileOverlay(); }).observe(wrap);
+</script>
+</body>
+</html>
