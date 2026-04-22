@@ -54,6 +54,30 @@ async function loadRutas() {
   }
 }
 
+// ── Convex hull (Andrew's monotone chain) ─────────────────
+function convexHull(pts) {
+  if (pts.length < 3) return pts;
+  const sorted = [...pts].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  const cross = (o, a, b) =>
+    (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lower = [];
+  for (const p of sorted) {
+    while (lower.length >= 2 && cross(lower[lower.length-2], lower[lower.length-1], p) <= 0)
+      lower.pop();
+    lower.push(p);
+  }
+  const upper = [];
+  for (let i = sorted.length - 1; i >= 0; i--) {
+    const p = sorted[i];
+    while (upper.length >= 2 && cross(upper[upper.length-2], upper[upper.length-1], p) <= 0)
+      upper.pop();
+    upper.push(p);
+  }
+  lower.pop();
+  upper.pop();
+  return [...lower, ...upper];
+}
+
 // ── Dibujar rutas en mapa ─────────────────────────────────
 function drawRutas() {
   rutasData.forEach(ruta => {
@@ -71,6 +95,24 @@ function drawRutas() {
         geometry: { type: 'LineString', coordinates: coords }
       }
     });
+    // Hull
+    const hull = convexHull(coords);
+    if (hull.length >= 3) {
+      map.addSource(`hull-${ruta.id}`, {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          geometry: { type: 'Polygon', coordinates: [[...hull, hull[0]]] }
+        }
+      });
+      map.addLayer({
+        id: `hull-fill-${ruta.id}`,
+        type: 'fill',
+        source: `hull-${ruta.id}`,
+        paint: { 'fill-color': ruta.color, 'fill-opacity': 0.13 }
+      });
+    }
+
     map.addLayer({
       id: `ruta-line-${ruta.id}`,
       type: 'line',
@@ -185,10 +227,11 @@ function setActiveRuta(id) {
 
   // Dim/show layers
   rutasData.forEach(ruta => {
-    const opacity = (!id || ruta.id === id) ? 0.9 : 0.2;
-    if (map.getLayer(`ruta-line-${ruta.id}`)) {
-      map.setPaintProperty(`ruta-line-${ruta.id}`, 'line-opacity', opacity);
-    }
+    const active = !id || ruta.id === id;
+    if (map.getLayer(`ruta-line-${ruta.id}`))
+      map.setPaintProperty(`ruta-line-${ruta.id}`, 'line-opacity', active ? 0.9 : 0.2);
+    if (map.getLayer(`hull-fill-${ruta.id}`))
+      map.setPaintProperty(`hull-fill-${ruta.id}`, 'fill-opacity', active ? 0.13 : 0.03);
   });
 
   // Fit bounds
