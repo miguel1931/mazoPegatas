@@ -1,6 +1,40 @@
 {
   "rutas": [
     {
+      "id": "2026-04-27-nueva-ruta",
+      "titulo": "nueva ruta",
+      "fecha": "2026-04-27",
+      "color": "#E63946",
+      "fotos": [
+        { "src": "img/rutas/2026-04-27-nueva-ruta/01.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/01-thumb.jpg", "lat": 40.43477247222222, "lng": -3.6828019444444444, "timestamp": "2026-04-27T17:01:26.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/02.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/02-thumb.jpg", "lat": 40.43465041666666, "lng": -3.6805879999999997, "timestamp": "2026-04-27T17:05:33.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/03.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/03-thumb.jpg", "lat": 40.43465041666666, "lng": -3.6805879999999997, "timestamp": "2026-04-27T17:05:37.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/04.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/04-thumb.jpg", "lat": 40.433574666666665, "lng": -3.677283972222222, "timestamp": "2026-04-27T17:11:05.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/05.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/05-thumb.jpg", "lat": 40.43257902777778, "lng": -3.6747079166666667, "timestamp": "2026-04-27T17:15:15.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/06.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/06-thumb.jpg", "lat": 40.43257902777778, "lng": -3.6747079166666667, "timestamp": "2026-04-27T17:16:35.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/07.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/07-thumb.jpg", "lat": 40.43257902777778, "lng": -3.6747079166666667, "timestamp": "2026-04-27T17:24:56.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/08.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/08-thumb.jpg", "lat": 40.43403241666666, "lng": -3.67154, "timestamp": "2026-04-27T17:25:50.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/09.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/09-thumb.jpg", "lat": 40.43403241666666, "lng": -3.67154, "timestamp": "2026-04-27T17:25:54.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/10.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/10-thumb.jpg", "lat": 40.43419644444444, "lng": -3.670473083333333, "timestamp": "2026-04-27T17:50:17.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/11.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/11-thumb.jpg", "lat": 40.43419644444444, "lng": -3.670473083333333, "timestamp": "2026-04-27T17:50:46.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/12.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/12-thumb.jpg", "lat": 40.43784711111111, "lng": -3.6678230833333334, "timestamp": "2026-04-27T17:59:25.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/13.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/13-thumb.jpg", "lat": 40.43935391666666, "lng": -3.667437083333333, "timestamp": "2026-04-27T18:05:03.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/14.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/14-thumb.jpg", "lat": 40.439682, "lng": -3.664742, "timestamp": "2026-04-27T18:09:56.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/15.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/15-thumb.jpg", "lat": 40.43675230555555, "lng": -3.6678568888888887, "timestamp": "2026-04-27T18:27:34.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/16.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/16-thumb.jpg", "lat": 40.436660749999994, "lng": -3.6680600277777775, "timestamp": "2026-04-27T18:28:19.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/17.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/17-thumb.jpg", "lat": 40.43648527777778, "lng": -3.6695420555555556, "timestamp": "2026-04-27T18:31:08.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/18.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/18-thumb.jpg", "lat": 40.437366472222216, "lng": -3.6714649166666664, "timestamp": "2026-04-27T18:35:08.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/19.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/19-thumb.jpg", "lat": 40.437053666666664, "lng": -3.673122888888889, "timestamp": "2026-04-27T18:38:37.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/20.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/20-thumb.jpg", "lat": 40.437053666666664, "lng": -3.673122888888889, "timestamp": "2026-04-27T18:39:32.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/21.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/21-thumb.jpg", "lat": 40.43750761111111, "lng": -3.6748239999999996, "timestamp": "2026-04-27T18:43:49.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/22.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/22-thumb.jpg", "lat": 40.43659972222222, "lng": -3.675301972222222, "timestamp": "2026-04-27T18:55:34.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/23.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/23-thumb.jpg", "lat": 40.43659972222222, "lng": -3.675301972222222, "timestamp": "2026-04-27T19:23:25.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/24.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/24-thumb.jpg", "lat": 40.435474388888885, "lng": -3.6751188888888886, "timestamp": "2026-04-27T19:25:05.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/25.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/25-thumb.jpg", "lat": 40.43484877777777, "lng": -3.674942944444444, "timestamp": "2026-04-27T19:25:41.000Z" },
+        { "src": "img/rutas/2026-04-27-nueva-ruta/26.jpg", "thumb": "img/rutas/2026-04-27-nueva-ruta/26-thumb.jpg", "lat": 40.43484877777777, "lng": -3.674942944444444, "timestamp": "2026-04-27T19:25:45.000Z" }
+      ]
+    },
+    {
       "id": "2026-04-14-centro-proyecto1931",
       "titulo": "14 de abril · vuelta por el Centro",
       "fecha": "2026-04-14",
